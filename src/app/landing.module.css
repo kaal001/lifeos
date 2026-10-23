@@ -1970,3 +1970,32 @@
     scroll-behavior: auto;
   }
 }
+/* LifeOS brand icon */
+.brandIcon {
+  display: block;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: url("/branding/lifeos-app-192.png") center / cover no-repeat;
+}
+
+.footerBrand .brandIcon {
+  width: 31px;
+  height: 31px;
+  border-radius: 9px;
+}
+
+.mockLogo {
+  background: url("/branding/lifeos-app-192.png") center / cover no-repeat;
+  color: transparent;
+  font-size: 0;
+}
+
+@media (max-width: 600px) {
+  .brandIcon {
+    width: 37px;
+    height: 37px;
+    border-radius: 11px;
+  }
+}

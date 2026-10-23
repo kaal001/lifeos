@@ -267,6 +267,7 @@ const activeSection = isMounted
   const [savingHabitEdit, setSavingHabitEdit] = useState(false);
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [today, setToday] = useState("");
+  const [todayShort, setTodayShort] = useState("");
   const [todayKey, setTodayKey] = useState("");
 
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -353,7 +354,12 @@ useEffect(() => {
           year: "numeric",
         }),
       );
-
+      setTodayShort(
+        now.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
+      );
       const supabase = createClient();
 
       const {
@@ -1466,9 +1472,7 @@ async function addTask(event: FormEvent<HTMLFormElement>) {
           aria-label="LifeOS home"
           onClick={() => changeSection("Overview")}
         >
-          <span className="brand-mark">
-            L<span>.</span>
-          </span>
+          <span className="brand-mark" aria-hidden="true" />
           <span className="brand-copy">
             <strong>LifeOS</strong>
             <small>PERSONAL OPERATING SYSTEM</small>
@@ -1603,7 +1607,14 @@ async function addTask(event: FormEvent<HTMLFormElement>) {
               <span>
                 <Clock3 size={15} />
               </span>
-              <span>{today || "Your daily overview"}</span>
+
+              <span className="date-chip-label-full">
+                {today || "Your daily overview"}
+              </span>
+
+              <span className="date-chip-label-short">
+                {todayShort || ""}
+              </span>
             </div>
 
             <button
@@ -1619,6 +1630,53 @@ async function addTask(event: FormEvent<HTMLFormElement>) {
             >
               {theme === "dark" ? <Sun size={19} /> : <Moon size={19} />}
             </button>
+              <div className="mobile-account-container">
+                <button
+                  className="mobile-account-trigger"
+                  type="button"
+                  aria-label="Open account menu"
+                  aria-expanded={showAccountMenu}
+                  aria-controls="lifeos-mobile-account-menu"
+                  onClick={() => setShowAccountMenu((open) => !open)}
+                >
+                  <span className="mobile-account-avatar">
+                    {accountName.trim().charAt(0).toUpperCase() || "U"}
+                  </span>
+                </button>
+
+                {showAccountMenu && (
+                  <div
+                    id="lifeos-mobile-account-menu"
+                    className="mobile-account-menu"
+                    aria-label="Account actions"
+                  >
+                    <div className="account-menu-heading">
+                      <strong>{accountName}</strong>
+                      <small>{accountEmail || "Signed in"}</small>
+                    </div>
+
+                    <button
+                      className="account-menu-item"
+                      type="button"
+                      onClick={() => {
+                        setShowAccountMenu(false);
+                        changeSection("Settings");
+                      }}
+                    >
+                      Profile & Settings
+                    </button>
+
+                    <button
+                      className="account-menu-item"
+                      type="button"
+                      onClick={handleSignOut}
+                      disabled={isSigningOut}
+                    >
+                      {isSigningOut ? "Signing out..." : "Sign out"}
+                    </button>
+                </div>
+              )}
+            </div>
 
 
           </div>
