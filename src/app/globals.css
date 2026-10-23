@@ -472,7 +472,9 @@ a {
   color: var(--muted);
   font-size: 11px;
 }
-
+.date-chip-label-short {
+  display: none;
+}
 .date-chip > span:first-child {
   display: grid;
   place-items: center;
@@ -1701,15 +1703,22 @@ a {
   }
 
   .date-chip {
-    max-width: 38px;
+    max-width: none;
+    min-width: max-content;
     min-height: 36px;
     justify-content: center;
-    padding: 0;
+    gap: 6px;
+    padding: 0 9px;
   }
 
-  .date-chip > span:last-child {
+  .date-chip-label-full {
     display: none;
   }
+
+.date-chip-label-short {
+  display: inline;
+  white-space: nowrap;
+}
 
   .icon-button, .notification-button {
     width: 35px;
@@ -8315,4 +8324,78 @@ a {
     flex-wrap: wrap;
     gap: 8px;
   }
+}
+/* Mobile account access */
+.mobile-account-container {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .mobile-account-container {
+    position: relative;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .mobile-account-trigger {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--foreground);
+    cursor: pointer;
+  }
+
+  .mobile-account-trigger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .mobile-account-avatar {
+    display: grid;
+    width: 27px;
+    height: 27px;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--surface-muted);
+    color: var(--foreground);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .mobile-account-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 1000;
+    width: min(250px, calc(100vw - 24px));
+    padding: 12px;
+    overflow-wrap: anywhere;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--foreground);
+    box-shadow: 0 12px 30px rgb(0 0 0 / 24%);
+  }
+
+  .mobile-account-menu .account-menu-heading {
+    padding: 6px 4px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-account-menu .account-menu-item {
+    margin-top: 8px;
+    text-align: left;
+  }
+}
+/* LifeOS brand icon */
+.brand-mark {
+  background: url("/branding/lifeos-app-192.png") center / cover no-repeat;
+  color: transparent;
+  font-size: 0;
+  box-shadow: none;
 }

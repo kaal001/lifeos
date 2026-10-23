@@ -155,7 +155,7 @@ export default function AuthForm() {
       <div className={styles.shell}>
         <header className={styles.topbar}>
           <Link href="/" className={styles.brand} aria-label="LifeOS home">
-            <span className={styles.brandMark}>L<span>.</span></span>
+            <span className={styles.brandIcon} aria-hidden="true" />
             <span className={styles.brandName}>LifeOS</span>
           </Link>
 

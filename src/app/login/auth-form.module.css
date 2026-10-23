@@ -934,3 +934,19 @@
     animation-duration: 2s;
   }
 }
+/* LifeOS brand icon */
+.brandIcon {
+  display: block;
+  flex-shrink: 0;
+  width: 43px;
+  height: 43px;
+  border-radius: 12px;
+  background: url("/branding/lifeos-app-192.png") center / cover no-repeat;
+}
+
+@media (max-width: 600px) {
+  .brandIcon {
+    width: 38px;
+    height: 38px;
+  }
+}

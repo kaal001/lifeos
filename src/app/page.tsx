@@ -106,9 +106,7 @@ export default function LandingPage() {
 
       <header className={styles.header}>
         <a href="#top" className={styles.brand} aria-label="LifeOS home">
-          <span className={styles.brandMark}>
-            L<span>.</span>
-          </span>
+          <span className={styles.brandIcon} aria-hidden="true" />
           <span className={styles.brandText}>
             <strong>LifeOS</strong>
             <small>PERSONAL OPERATING SYSTEM</small>
@@ -523,7 +521,7 @@ export default function LandingPage() {
 
       <footer className={styles.footer}>
         <Link href="/" className={styles.footerBrand}>
-          <span className={styles.brandMark}>L<span>.</span></span>
+          <span className={styles.brandIcon} aria-hidden="true" />
           <strong>LifeOS</strong>
         </Link>
 

@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   description:
     "A personal growth workspace to organize your habits, goals, academics, fitness, and daily life.",
   applicationName: "LifeOS",
+    appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "LifeOS",
+  },
 };
 
 export const viewport: Viewport = {
@@ -38,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
+    <html lang="en" data-theme="dark" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
