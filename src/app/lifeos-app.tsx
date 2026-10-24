@@ -1939,7 +1939,7 @@ async function addTask(event: FormEvent<HTMLFormElement>) {
                   </div>
 
                   <div className="stat-note">
-                    Today's recorded Personal Growth practice time.
+                    Today&apos;s recorded Personal Growth practice time.
                   </div>
                 </article>
 

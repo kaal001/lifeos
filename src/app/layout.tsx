@@ -4,11 +4,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "LifeOS — Your Personal Growth System",
+    default: "LifeOS - Your Personal Growth System",
     template: "%s | LifeOS",
   },
   description:
-    "A personal growth workspace to organize your habits, goals, academics, fitness, and daily life.",
+    "A personal growth workspace to organize your habits, goals, academics, fitness and daily life.",
   applicationName: "LifeOS",
     appleWebApp: {
     capable: true,

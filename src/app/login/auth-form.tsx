@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -57,8 +57,22 @@ export default function AuthForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
+  const [pendingConfirmationEmail, setPendingConfirmationEmail] =
+    useState("");
+  const [isResendingConfirmation, setIsResendingConfirmation] =
+    useState(false);
+  const [resendCooldownSeconds, setResendCooldownSeconds] = useState(0);
   const nextPath = getSafeNextPath(searchParams.get("next"));
   const currentYear = new Date().getFullYear();
+  useEffect(() => {
+    if (resendCooldownSeconds <= 0) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setResendCooldownSeconds((seconds) => Math.max(0, seconds - 1));
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [resendCooldownSeconds]);
 
   function changeMode(nextMode: AuthMode) {
     setMode(nextMode);
@@ -117,8 +131,9 @@ export default function AuthForm() {
           return;
         }
 
+        setPendingConfirmationEmail(email.trim());
         setStatusMessage(
-          "Your account request was submitted. Check your email for the confirmation link, then use it to activate your account.",
+          "Your account request was submitted. Check your inbox and spam/junk folder. If your mailbox is full, make space first, then use the resend button below.",
         );
         setPassword("");
         setConfirmPassword("");
@@ -143,7 +158,69 @@ export default function AuthForm() {
       setIsLoading(false);
     }
   }
+  async function handleResendConfirmation() {
+    const targetEmail = email.trim();
 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(targetEmail)) {
+      setErrorMessage("Enter the email address you used to sign up first.");
+      setStatusMessage("");
+      return;
+    }
+
+    if (isResendingConfirmation || resendCooldownSeconds > 0) {
+      return;
+    }
+
+    setErrorMessage("");
+    setStatusMessage("");
+    setIsResendingConfirmation(true);
+    setResendCooldownSeconds(60);
+
+    try {
+      const supabase = createClient();
+
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: targetEmail,
+        options: {
+          emailRedirectTo:
+            `${window.location.origin}/auth/confirm?next=` +
+            encodeURIComponent(nextPath),
+        },
+      });
+
+      if (error) {
+        const message = error.message.toLowerCase();
+
+        if (
+          message.includes("rate limit") ||
+          message.includes("too many") ||
+          message.includes("security purposes")
+        ) {
+          setErrorMessage(
+            "Too many requests. Please wait before requesting another email.",
+          );
+        } else {
+          setErrorMessage(
+            "We couldn't resend the confirmation email. If you've already confirmed this address, try signing in. Otherwise, check the email address and try again later.",
+          );
+        }
+
+        return;
+      }
+
+      setPendingConfirmationEmail(targetEmail);
+      setStatusMessage(
+        "If this email has a signup awaiting confirmation, a new confirmation email has been requested. Check your inbox and spam/junk folder, and make room in your mailbox if it's full.",
+      );
+    } catch {
+      setErrorMessage(
+        "We couldn't request a confirmation email right now. Please try again later.",
+      );
+    } finally {
+      setIsResendingConfirmation(false);
+    }
+  }
   return (
     <main className={styles.page}>
       <div className={styles.ambient} aria-hidden="true">
@@ -448,6 +525,31 @@ export default function AuthForm() {
                   )}
                 </button>
               </form>
+
+              {(mode === "signup" && Boolean(pendingConfirmationEmail)) && (
+                <div className={styles.resendPrompt}>
+                  <p>Didn&apos;t get the confirmation email?</p>
+
+                  <button
+                    className={styles.resendButton}
+                    type="button"
+                    onClick={handleResendConfirmation}
+                    disabled={
+                      isLoading ||
+                      isResendingConfirmation ||
+                      resendCooldownSeconds > 0
+                    }
+                  >
+                    {isResendingConfirmation
+                      ? "Sending confirmation email..."
+                      : resendCooldownSeconds > 0
+                        ? `Try again in ${resendCooldownSeconds}s`
+                        : "Resend confirmation email"}
+                  </button>
+
+
+                </div>
+              )}
 
               <div className={styles.formDivider}>
                 <span />
