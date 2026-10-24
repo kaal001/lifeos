@@ -1977,7 +1977,7 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: url("/branding/lifeos-app-192.png") center / cover no-repeat;
+  background: url("/branding/lifeos-logo-transparent.webp") center / contain no-repeat;
 }
 
 .footerBrand .brandIcon {
@@ -1987,7 +1987,7 @@
 }
 
 .mockLogo {
-  background: url("/branding/lifeos-app-192.png") center / cover no-repeat;
+  background: url("/branding/lifeos-logo-transparent.webp") center / contain no-repeat;
   color: transparent;
   font-size: 0;
 }

@@ -5094,6 +5094,7 @@ a {
 }
 
 .fitness-session-hero {
+  color: #eef1f7;
   padding: 22px;
   border: 1px solid rgba(116, 157, 208, 0.25);
   border-radius: 18px;
@@ -5135,7 +5136,7 @@ a {
 }
 
 .fitness-kicker {
-  color: var(--muted, #a6b2ca);
+  color: #a6b2ca;
   font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.1em;
@@ -5149,7 +5150,7 @@ a {
 
 .fitness-session-heading p {
   margin: 0;
-  color: var(--muted, #a6b2ca);
+  color: #a6b2ca;
   font-size: 12px;
 }
 
@@ -5220,7 +5221,7 @@ a {
 
 .fitness-session-progress > p {
   margin: 8px 0 0;
-  color: var(--muted, #a6b2ca);
+  color: #a6b2ca;
   font-size: 10px;
 }
 
@@ -5231,6 +5232,7 @@ a {
 }
 
 .fitness-summary-card {
+  color: #eef1f7;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -5254,7 +5256,7 @@ a {
 }
 
 .fitness-summary-card > div > span {
-  color: var(--muted, #a6b2ca);
+  color: #a6b2ca;
   font-size: 9px;
   font-weight: 750;
   line-height: 1.4;
@@ -5678,6 +5680,7 @@ a {
 }
 
 .personal-growth-summary-card {
+  color: #eef1f7;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -5716,7 +5719,7 @@ a {
 }
 
 .personal-growth-summary-card > div > span {
-  color: var(--muted, #a6b2ca);
+  color: #a6b2ca;
   font-size: 9px;
   font-weight: 750;
   letter-spacing: 0.04em;
@@ -6396,6 +6399,7 @@ a {
 }
 
 .analytics-stat-card {
+  color: #eef1f7;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -6432,7 +6436,7 @@ a {
 }
 
 .analytics-stat-label {
-  color: var(--muted, #a6b2ca);
+  color: #a6b2ca;
   font-size: 9px;
   font-weight: 750;
   line-height: 1.4;
@@ -6449,7 +6453,7 @@ a {
 
 .analytics-stat-note {
   min-height: 27px;
-  color: var(--muted, #a6b2ca);
+  color: #a6b2ca;
   font-size: 10px;
   line-height: 1.5;
 }
@@ -6630,7 +6634,7 @@ a {
 .analytics-mix-top > span:not(.analytics-mix-icon) {
   flex: 1 1 auto;
   min-width: 0;
-  color: var(--text, #e3e9f5);
+  color: var(--foreground);
   font-size: 10px;
 }
 
@@ -8394,8 +8398,12 @@ a {
 }
 /* LifeOS brand icon */
 .brand-mark {
-  background: url("/branding/lifeos-app-192.png") center / cover no-repeat;
+  background: url("/branding/lifeos-logo-transparent.webp") center / contain no-repeat;
   color: transparent;
   font-size: 0;
   box-shadow: none;
+}
+/* Keep workout date label readable on the dark session card. */
+.fitness-date-controls .academics-field > span {
+  color: #a6b2ca;
 }

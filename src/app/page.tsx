@@ -531,6 +531,14 @@ export default function LandingPage() {
           <Link href="#features">Features</Link>
           <Link href="#pricing">Pricing</Link>
           <Link href="/login">Sign in</Link>
+          <a
+  href="https://mail.google.com/mail/?view=cm&fs=1&to=kaal2004n%40gmail.com&su=LifeOS%20Help"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Help and support: kaal2004n@gmail.com"
+>
+            Help: kaal2004n@gmail.com
+          </a>
         </div>
 
         <span className={styles.copyright}>© 2026 LifeOS</span>

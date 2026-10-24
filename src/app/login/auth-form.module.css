@@ -950,3 +950,51 @@
     height: 38px;
   }
 }
+/* Signup confirmation email resend */
+.resendPrompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.resendPrompt p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.resendButton {
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  text-underline-offset: 3px;
+}
+
+.resendButton:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.resendButton:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.resendButton:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.resendPrompt .resendHint {
+  max-width: 320px;
+  font-size: 11px;
+}
