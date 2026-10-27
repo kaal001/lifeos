@@ -1,0 +1,417 @@
+/* Tablet screens */
+
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 230px;
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .main-panel {
+    margin-left: 230px;
+  }
+
+  .topbar {
+    padding-right: 25px;
+    padding-left: 25px;
+  }
+
+  .dashboard-content {
+    padding-right: 25px;
+    padding-left: 25px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(260px, .9fr);
+  }
+
+  .stat-card {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .planner-panel {
+    padding: 24px;
+  }
+
+  .planner-form {
+    grid-template-columns: minmax(0, 1fr) 125px auto;
+  }
+}
+
+/* Compact screens */
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 76px;
+    align-items: center;
+    padding: 22px 9px 14px;
+  }
+
+  .brand {
+    justify-content: center;
+    padding: 0 0 28px;
+  }
+
+  .brand-mark {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand-copy, .workspace-copy, .workspace-chevron,
+  .sidebar-label, .nav-item > span:not(.nav-icon),
+  .upgrade-card, .profile-copy, .profile-menu {
+    display: none;
+  }
+
+  .workspace-switcher {
+    justify-content: center;
+    padding: 7px 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .nav-group {
+    width: 100%;
+  }
+
+  .nav-group .nav-item {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .nav-icon {
+    font-size: 20px;
+  }
+
+  .sidebar-bottom {
+    width: 100%;
+  }
+
+  .profile {
+    justify-content: center;
+    padding-top: 15px;
+  }
+
+  .main-panel {
+    margin-left: 76px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-chart {
+    max-width: 520px;
+  }
+
+  .topbar {
+    padding-right: 22px;
+    padding-left: 22px;
+  }
+
+  .dashboard-content {
+    padding-right: 22px;
+    padding-left: 22px;
+  }
+
+  .planner-form {
+    grid-template-columns: minmax(0, 1fr) 125px;
+  }
+
+  .planner-submit {
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .sidebar {
+    position: fixed;
+    inset: auto 0 0;
+    width: 100%;
+    height: 66px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 5px 9px;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-right: 0;
+    background: var(--sidebar);
+  }
+
+  .brand, .workspace-switcher, .sidebar-bottom,
+  .nav-group .sidebar-label {
+    display: none;
+  }
+
+  .nav-group {
+    display: contents;
+  }
+
+  .nav-item {
+    display: flex;
+    width: 43px;
+    min-height: 43px;
+    flex-shrink: 0;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border-radius: 12px;
+  }
+
+  .nav-item > span:not(.nav-icon) {
+    display: none;
+  }
+
+  .main-panel {
+    margin-left: 0;
+    padding-bottom: 66px;
+  }
+
+  .topbar {
+    position: relative;
+    min-height: 62px;
+    padding: 0 15px;
+    gap: 8px;
+  }
+
+  .breadcrumb {
+    gap: 6px;
+    font-size: 11px;
+  }
+
+  .topbar-actions {
+    gap: 6px;
+  }
+
+  .date-chip {
+    max-width: none;
+    min-width: max-content;
+    min-height: 36px;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 9px;
+  }
+
+  .date-chip-label-full {
+    display: none;
+  }
+
+.date-chip-label-short {
+  display: inline;
+  white-space: nowrap;
+}
+
+  .icon-button, .notification-button {
+    width: 35px;
+    min-height: 35px;
+  }
+
+  .dashboard-content {
+    padding: 19px 13px 15px;
+  }
+
+  .welcome-section {
+    min-height: 166px;
+    padding: 23px 19px;
+    border-radius: 14px;
+  }
+
+  .welcome-section h1 {
+    font-size: 29px;
+    letter-spacing: -1.2px;
+  }
+
+  .welcome-section p {
+    max-width: 310px;
+    font-size: 11px;
+  }
+
+  .welcome-decoration {
+    position: absolute;
+    right: -47px;
+    bottom: -30px;
+    opacity: .45;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 11px;
+    margin-top: 13px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-top {
+    margin-bottom: 11px;
+  }
+
+  .stat-value {
+    font-size: 30px;
+  }
+
+  .stat-progress {
+    margin-top: 13px;
+  }
+
+  .dashboard-grid {
+    gap: 13px;
+    margin-top: 13px;
+  }
+
+  .panel {
+    padding: 19px 14px 15px;
+    border-radius: 13px;
+  }
+
+  .panel-heading h2 {
+    font-size: 18px;
+  }
+
+  .panel-heading p {
+    max-width: 235px;
+  }
+
+  .habit-row {
+    gap: 9px;
+    padding: 12px 0;
+  }
+
+  .habit-symbol {
+    width: 32px;
+    height: 32px;
+  }
+
+  .habit-copy strong {
+    font-size: 11px;
+  }
+
+  .habit-copy small, .habit-status {
+    font-size: 9px;
+  }
+
+  .habit-status {
+    max-width: 58px;
+    text-align: right;
+  }
+
+  .weekly-summary {
+    gap: 13px;
+    padding: 13px;
+  }
+
+  .activity-chart {
+    height: 155px;
+    gap: 10px;
+  }
+
+  .chart-bar-track {
+    height: 125px;
+  }
+
+  .dashboard-footer {
+    padding-top: 18px;
+    font-size: 9px;
+  }
+
+  .planner-panel {
+    padding: 19px 14px;
+  }
+
+  .planner-heading {
+    gap: 10px;
+  }
+
+  .planner-heading h1 {
+    font-size: 30px;
+  }
+
+  .planner-heading p {
+    max-width: 245px;
+    font-size: 11px;
+  }
+
+  .planner-stats {
+    gap: 7px;
+    margin-top: 22px;
+  }
+
+  .planner-stat {
+    grid-template-columns: 1fr;
+    gap: 7px;
+    padding: 11px 9px;
+  }
+
+  .planner-stat-icon {
+    width: 31px;
+    height: 31px;
+  }
+
+  .planner-stat-label {
+    font-size: 8px;
+    letter-spacing: .5px;
+  }
+
+  .planner-stat strong {
+    font-size: 21px;
+  }
+
+  .planner-form {
+    grid-template-columns: 1fr;
+    padding: 13px;
+  }
+
+  .planner-submit {
+    grid-column: auto;
+    justify-self: stretch;
+  }
+
+  .task-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 25px;
+  }
+
+  .task-filters {
+    max-width: 100%;
+  }
+
+  .task-filter {
+    padding: 7px 9px;
+  }
+
+  .task-row {
+    gap: 9px;
+    padding: 13px 0;
+  }
+
+  .task-priority {
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  .task-delete {
+    width: 30px;
+    height: 30px;
+  }
+
+  .task-empty {
+    min-height: 210px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

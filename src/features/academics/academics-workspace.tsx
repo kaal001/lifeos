@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { useConfirmDialog } from "./confirm-dialog-provider";
+import { useConfirmDialog } from "@/app/confirm-dialog-provider";
 
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -10,6 +10,7 @@ import {
   CalendarDays,
   Check,
   ClipboardList,
+  ChevronDown,
   GraduationCap,
   Plus,
   Pencil,
@@ -232,6 +233,19 @@ function validateGradeScale(scale: GradeBand[]) {
 export default function AcademicsWorkspace() {
   const { requestConfirmation } = useConfirmDialog();
   const [courses, setCourses] = useState<Course[]>([]);
+  // Courses start collapsed to keep the Academics page compact, especially on phones.
+  const [expandedCourseIds, setExpandedCourseIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  function toggleCourseExpanded(courseId: string) {
+    setExpandedCourseIds((current) => {
+      const next = new Set(current);
+      if (next.has(courseId)) next.delete(courseId);
+      else next.add(courseId);
+      return next;
+    });
+  }
   const assessmentMarksSaveQueue = useRef<Map<string, Promise<void>>>(
     new Map(),);
   const assessmentMarksSaveVersions = useRef<Map<string, number>>(
@@ -1800,16 +1814,41 @@ async function deleteCourse(courseId: string) {
 
             return (
               <article className="panel academics-course-card" key={course.id}>
-                <div className="academics-course-top">
-                  <span className="academics-course-icon">
-                    <BookOpen size={20} />
-                  </span>
+                <div className="academics-course-accordion-header">
+                  <button
+                    className="academics-course-accordion-trigger"
+                    type="button"
+                    aria-expanded={expandedCourseIds.has(course.id)}
+                    aria-controls={`academics-course-details-${course.id}`}
+                    onClick={() => toggleCourseExpanded(course.id)}
+                  >
+                    <span className="academics-course-icon" aria-hidden="true">
+                      <BookOpen size={20} />
+                    </span>
+                    <span className="academics-course-accordion-copy">
+                      <strong>{course.name}</strong>
+                      <span className="academics-course-accordion-code">
+                        {course.code} <span>· {course.credits} credits</span>
+                      </span>
+                      <span className="academics-course-accordion-progress">
+                        {total} {total === 1 ? "assessment" : "assessments"} · {completed}/{total} done
+                      </span>
+                    </span>
+                    <ChevronDown
+                      className={`academics-course-accordion-chevron ${expandedCourseIds.has(course.id) ? "is-expanded" : ""}`}
+                      size={19}
+                      aria-hidden="true"
+                    />
+                  </button>
 
                   <div className="academics-course-actions">
                     <button
                       className="academics-edit"
                       type="button"
-                      onClick={() => startCourseEdit(course)}
+                      onClick={() => {
+                        setExpandedCourseIds((current) => new Set(current).add(course.id));
+                        startCourseEdit(course);
+                      }}
                       disabled={savingCourseEdit}
                       title="Edit course"
                       aria-label={`Edit course ${course.name}`}
@@ -1913,9 +1952,11 @@ async function deleteCourse(courseId: string) {
     </div>
   </form>
 )}
-                <div className="academics-course-code">{course.code} <span>· {course.credits} credits</span></div>
-                <h3>{course.name}</h3>
-
+                {expandedCourseIds.has(course.id) && (
+                  <div
+                    id={`academics-course-details-${course.id}`}
+                    className="academics-course-details"
+                  >
                 <div className="academics-course-progress-heading"><span>Assessment checklist</span><strong>{courseProgress}%</strong></div>
                 <div className="academics-progress-track" role="progressbar" aria-label={`${course.name} assessment completion`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={courseProgress}><span style={{ width: `${courseProgress}%` }} /></div>
                 <div className="academics-assessment-heading">
@@ -2354,6 +2395,8 @@ async function deleteCourse(courseId: string) {
                         Add assessment
                     </button>
                     )}
+                  </div>
+                )}
               </article>
             );
           })}

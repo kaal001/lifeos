@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { useConfirmDialog } from "./confirm-dialog-provider";
+import { useConfirmDialog } from "@/app/confirm-dialog-provider";
 import { createClient } from "@/lib/supabase/client";
 import {
   ArrowUpRight,

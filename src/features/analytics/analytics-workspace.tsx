@@ -34,6 +34,7 @@ type FitnessExercise = {
   sets: number;
   reps: number;
   weight?: number | null;
+  weightSpec?: string | null;
   completed: boolean;
 };
 
@@ -264,6 +265,8 @@ function normalizeFitness(value: unknown): FitnessDay[] {
         reps: safeNumber(exercise.reps),
         weight:
           typeof exercise.weight === "number" ? exercise.weight : null,
+        weightSpec:
+          typeof exercise.weightSpec === "string" ? exercise.weightSpec : null,
         completed: exercise.completed,
       }];
     });
@@ -625,7 +628,7 @@ export default function AnalyticsWorkspace() {
           supabase
             .from("exercises")
             .select(
-              "id, workout_date, name, sets, reps, weight_kg, completed",
+              "id, workout_date, name, sets, reps, weight_kg, weight_spec, completed",
             )
             .eq("user_id", user.id)
             .order("sort_order", { ascending: true }),
@@ -734,6 +737,10 @@ export default function AnalyticsWorkspace() {
                   exercise.weight_kg === null
                     ? null
                     : Number(exercise.weight_kg),
+                weightSpec:
+                  exercise.weight_spec == null
+                    ? (exercise.weight_kg == null ? null : String(exercise.weight_kg))
+                    : String(exercise.weight_spec),
                 completed: exercise.completed,
               })),
           }),
@@ -897,9 +904,11 @@ const events = useMemo<AnalyticsEvent[]>(() => {
         kind: "fitness" as const,
         title: `${day.title} · ${exercise.name}`,
         detail: `${exercise.sets} sets × ${exercise.reps} reps${
-          exercise.weight != null && exercise.weight > 0
-            ? ` · ${exercise.weight} kg`
-            : ""
+          exercise.weightSpec?.trim()
+            ? ` · ${exercise.weightSpec.trim()} kg`
+            : exercise.weight != null && exercise.weight > 0
+              ? ` · ${exercise.weight} kg`
+              : ""
         }`,
       })),
   );

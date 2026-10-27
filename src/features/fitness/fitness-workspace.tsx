@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { useConfirmDialog } from "./confirm-dialog-provider";
+import { useConfirmDialog } from "@/app/confirm-dialog-provider";
 import { createClient } from "@/lib/supabase/client";
+import FitnessRoutinePlanner from "@/features/fitness/fitness-routine-planner";
+import { getFitnessWeightText, parseFitnessWeightSpec } from "@/features/fitness/fitness-weight-spec";
 import {
   CalendarDays,
+  ChevronDown,
+  ChevronUp,
   Check,
   Dumbbell,
   Plus,
@@ -22,6 +26,7 @@ type Exercise = {
   sets: number;
   reps: number;
   weight?: number | null;
+  weightSpec?: string | null;
   completed: boolean;
 };
 
@@ -101,14 +106,18 @@ function isWorkoutDay(value: unknown): value is WorkoutDay {
   );
 }
 
+const FITNESS_DATA_TIMEOUT_MS = 12_000;
+
 export default function FitnessWorkspace() {
   const { requestConfirmation } = useConfirmDialog();
   const [workoutDays, setWorkoutDays] = useState<WorkoutDay[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadRetryCount, setLoadRetryCount] = useState(0);
 
   const [selectedDate, setSelectedDate] = useState("");
+  const [dateSelectionRevision, setDateSelectionRevision] = useState(0);
   const [showDayForm, setShowDayForm] = useState(false);
   const [dayTitle, setDayTitle] = useState("");
 
@@ -124,12 +133,19 @@ export default function FitnessWorkspace() {
   const [savingExerciseEdit, setSavingExerciseEdit] = useState(false);
 
   const [formError, setFormError] = useState("");
+  const [workoutHistoryCollapsed, setWorkoutHistoryCollapsed] = useState(false);
 
 
   useEffect(() => {
     let cancelled = false;
+    let activeController: AbortController | null = null;
 
     async function loadFitnessData() {
+      setLoaded(false);
+      setLoadError(null);
+
+      let requestTimedOut = false;
+      let timeoutId: number | undefined;
       const today = getDateKey(new Date());
 
       setSelectedDate(today);
@@ -138,11 +154,13 @@ export default function FitnessWorkspace() {
         const supabase = createClient();
 
         const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
 
-        if (userError) throw userError;
+        if (sessionError) throw sessionError;
+
+        const user = session?.user ?? null;
 
         if (!user) {
           throw new Error(
@@ -154,29 +172,42 @@ export default function FitnessWorkspace() {
           setUserId(user.id);
         }
 
-        const {
-          data: dayRows,
-          error: dayError,
-        } = await supabase
-          .from("workout_days")
-          .select("workout_date, title")
-          .eq("user_id", user.id)
-          .order("workout_date", { ascending: false });
+        const requestController = new AbortController();
+        activeController = requestController;
 
-        if (dayError) throw dayError;
+        timeoutId = window.setTimeout(() => {
+          requestTimedOut = true;
+          requestController.abort();
+        }, FITNESS_DATA_TIMEOUT_MS);
 
-        const {
-          data: exerciseRows,
-          error: exerciseError,
-        } = await supabase
-          .from("exercises")
-          .select(
-            "id, workout_date, name, sets, reps, weight_kg, completed, sort_order"
-          )
-          .eq("user_id", user.id)
-          .order("sort_order", { ascending: true });
+        const [dayResult, exerciseResult] = await Promise.all([
+          supabase
+            .from("workout_days")
+            .select("workout_date, title")
+            .eq("user_id", user.id)
+            .order("workout_date", { ascending: false })
+            .abortSignal(requestController.signal),
+          supabase
+            .from("exercises")
+            .select(
+              "id, workout_date, name, sets, reps, weight_kg, weight_spec, completed, sort_order"
+            )
+            .eq("user_id", user.id)
+            .order("sort_order", { ascending: true })
+            .abortSignal(requestController.signal),
+        ]);
 
-        if (exerciseError) throw exerciseError;
+        if (requestTimedOut) {
+          throw new Error(
+            "Loading workout data took too long. Check your connection and retry.",
+          );
+        }
+
+        if (dayResult.error) throw dayResult.error;
+        if (exerciseResult.error) throw exerciseResult.error;
+
+        const dayRows = dayResult.data;
+        const exerciseRows = exerciseResult.data;
 
         const cloudDays: WorkoutDay[] = (dayRows ?? []).map((day) => ({
           date: day.workout_date,
@@ -192,6 +223,9 @@ export default function FitnessWorkspace() {
                 exercise.weight_kg === null
                   ? null
                   : Number(exercise.weight_kg),
+              weightSpec: exercise.weight_spec == null
+                ? (exercise.weight_kg == null ? null : String(exercise.weight_kg))
+                : String(exercise.weight_spec),
               completed: exercise.completed,
             })),
         }));
@@ -205,16 +239,21 @@ export default function FitnessWorkspace() {
         }
       } catch (error) {
         console.error("Could not load cloud fitness data:", error);
+        activeController?.abort();
 
         if (!cancelled) {
-          setWorkoutDays([]);
           setLoadError(
-            error instanceof Error
-              ? error.message
-              : "Could not load your workouts. Please try again."
+            requestTimedOut
+              ? "Loading workout data took too long. Check your connection and retry."
+              : error instanceof Error
+                ? error.message
+                : "Could not load your workouts. Please try again.",
           );
         }
       } finally {
+        if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+        activeController = null;
+
         if (!cancelled) {
           setLoaded(true);
         }
@@ -225,8 +264,9 @@ export default function FitnessWorkspace() {
 
     return () => {
       cancelled = true;
+      activeController?.abort();
     };
-  }, []);
+  }, [loadRetryCount]);
 
   const selectedDay = workoutDays.find(
     (day) => day.date === selectedDate,
@@ -263,6 +303,9 @@ export default function FitnessWorkspace() {
   );
 
   function handleDateChange(value: string) {
+    if (value !== selectedDate) {
+      setDateSelectionRevision((revision) => revision + 1);
+    }
     setSelectedDate(value);
 
     const day = workoutDays.find((item) => item.date === value);
@@ -377,9 +420,8 @@ export default function FitnessWorkspace() {
     const name = exerciseDraft.name.trim();
     const sets = Number(exerciseDraft.sets);
     const reps = Number(exerciseDraft.reps);
-    const weightText = exerciseDraft.weight.trim();
-
-    const weight = weightText === "" ? null : Number(weightText);
+    const weightResult = parseFitnessWeightSpec(exerciseDraft.weight);
+    const weight = weightResult.numericValue;
 
     if (!name) {
       setFormError("Enter an exercise name.");
@@ -398,18 +440,8 @@ export default function FitnessWorkspace() {
       return;
     }
 
-    if (
-      weightText !== "" &&
-      (
-        weight === null ||
-        !Number.isFinite(weight) ||
-        weight <= 0 ||
-        weight > 1000
-      )
-    ) {
-      setFormError(
-        "Weight must be greater than 0 and no more than 1000 kg, or leave it blank.",
-      );
+    if (!weightResult.valid) {
+      setFormError(weightResult.error ?? "Enter a valid weight, range, or comma-separated list.");
       return;
     }
 
@@ -431,11 +463,12 @@ export default function FitnessWorkspace() {
           sets,
           reps,
           weight_kg: weight,
+          weight_spec: weightResult.value,
           completed: false,
           sort_order: selectedDay.exercises.length,
         })
         .select(
-          "id, name, sets, reps, weight_kg, completed",
+          "id, name, sets, reps, weight_kg, weight_spec, completed",
         )
         .single();
 
@@ -449,6 +482,9 @@ export default function FitnessWorkspace() {
         weight: data.weight_kg === null
           ? null
           : Number(data.weight_kg),
+        weightSpec: data.weight_spec == null
+          ? (data.weight_kg == null ? null : String(data.weight_kg))
+          : String(data.weight_spec),
         completed: data.completed,
       };
 
@@ -485,7 +521,7 @@ function startExerciseEdit(exercise: Exercise) {
     name: exercise.name,
     sets: String(exercise.sets),
     reps: String(exercise.reps),
-    weight: exercise.weight == null ? "" : String(exercise.weight),
+    weight: getFitnessWeightText(exercise.weightSpec, exercise.weight),
   });
 
   setShowExerciseForm(false);
@@ -520,8 +556,8 @@ function cancelExerciseEdit() {
     const name = editExerciseDraft.name.trim();
     const sets = Number(editExerciseDraft.sets);
     const reps = Number(editExerciseDraft.reps);
-    const weightText = editExerciseDraft.weight.trim();
-    const weight = weightText === "" ? null : Number(weightText);
+    const weightResult = parseFitnessWeightSpec(editExerciseDraft.weight);
+    const weight = weightResult.numericValue;
 
     if (!name) {
       setFormError("Enter an exercise name.");
@@ -540,18 +576,8 @@ function cancelExerciseEdit() {
       return;
     }
 
-    if (
-      weightText !== "" &&
-      (
-        weight === null ||
-        !Number.isFinite(weight) ||
-        weight <= 0 ||
-        weight > 1000
-      )
-    ) {
-      setFormError(
-        "Weight must be greater than 0 and no more than 1000 kg, or leave it blank.",
-      );
+    if (!weightResult.valid) {
+      setFormError(weightResult.error ?? "Enter a valid weight, range, or comma-separated list.");
       return;
     }
 
@@ -582,11 +608,12 @@ function cancelExerciseEdit() {
           sets,
           reps,
           weight_kg: weight,
+          weight_spec: weightResult.value,
         })
         .eq("user_id", userId)
         .eq("workout_date", date)
         .eq("id", exerciseId)
-        .select("id, name, sets, reps, weight_kg")
+        .select("id, name, sets, reps, weight_kg, weight_spec")
         .single();
 
       if (error) throw error;
@@ -609,6 +636,9 @@ function cancelExerciseEdit() {
                           data.weight_kg == null
                             ? null
                             : Number(data.weight_kg),
+                        weightSpec: data.weight_spec == null
+                          ? (data.weight_kg == null ? null : String(data.weight_kg))
+                          : String(data.weight_spec),
                       },
                 ),
               },
@@ -785,6 +815,24 @@ async function deleteExercise(exerciseId: string) {
     }
   }
 
+  function handleRoutineApplied(day: WorkoutDay) {
+    if (day.date !== selectedDate) {
+      setDateSelectionRevision((revision) => revision + 1);
+    }
+    setWorkoutDays((current) => {
+      const existing = current.some((item) => item.date === day.date);
+      return existing
+        ? current.map((item) => item.date === day.date ? day : item)
+        : [...current, day];
+    });
+    setSelectedDate(day.date);
+    setDayTitle(day.title);
+    setShowDayForm(false);
+    setShowExerciseForm(false);
+    setExerciseDraft(initialExerciseDraft);
+    setFormError("");
+  }
+
   if (!loaded) {
     return (
       <section className="panel fitness-loading">
@@ -800,7 +848,7 @@ async function deleteExercise(exerciseId: string) {
         <button
           className="text-button"
           type="button"
-          onClick={() => window.location.reload()}
+          onClick={() => setLoadRetryCount((count) => count + 1)}
         >
           Try again
         </button>
@@ -815,8 +863,7 @@ async function deleteExercise(exerciseId: string) {
           <div className="panel-kicker">YOUR MOVEMENT WORKSPACE</div>
           <h1>Fitness</h1>
           <p>
-            Plan your training days, track exercises, and build consistency
-            one session at a time.
+            Choose a workout date first. The matching active weekly routine appears below; create manually only when starting from scratch.
           </p>
         </div>
 
@@ -826,7 +873,7 @@ async function deleteExercise(exerciseId: string) {
           onClick={openDayForm}
         >
           <Plus size={15} />
-          {selectedDay ? "Edit workout day" : "Set workout day"}
+          {selectedDay ? "Edit workout day" : "Create manually"}
         </button>
       </div>
 
@@ -890,6 +937,14 @@ async function deleteExercise(exerciseId: string) {
           </p>
         </div>
       </section>
+
+      <FitnessRoutinePlanner
+        selectedDate={selectedDate}
+        contextRevision={dateSelectionRevision}
+        hasWorkoutOnDate={workoutDays.some((day) => day.date === selectedDate)}
+        existingWorkout={workoutDays.find((day) => day.date === selectedDate) ?? null}
+        onWorkoutCreated={handleRoutineApplied}
+      />
 
       {showDayForm && (
         <form className="panel fitness-form" onSubmit={saveWorkoutDay}>
@@ -1132,13 +1187,12 @@ async function deleteExercise(exerciseId: string) {
                             />
                           </label>
 
-                          <label className="fitness-exercise-edit-field">
-                            <span>Weight (kg)</span>
+                          <label className="fitness-exercise-edit-field fitness-weight-field">
+                            <span>Weight (kg, optional)</span>
                             <input
-                              type="number"
-                              min="0.01"
-                              max="1000"
-                              step="any"
+                              type="text"
+                              inputMode="text"
+                              maxLength={64}
                               value={editExerciseDraft.weight}
                               onChange={(event) =>
                                 setEditExerciseDraft((current) => ({
@@ -1146,8 +1200,10 @@ async function deleteExercise(exerciseId: string) {
                                   weight: event.target.value,
                                 }))
                               }
-                              placeholder="Optional"
+                              placeholder="30, 40-55"
+                              aria-describedby={`fitness-edit-weight-help-${exercise.id}`}
                             />
+                            <small id={`fitness-edit-weight-help-${exercise.id}`}>Use a value, range, or comma-separated list.</small>
                           </label>
                         </div>
 
@@ -1178,10 +1234,8 @@ async function deleteExercise(exerciseId: string) {
                           <span>
                             {exercise.sets} {exercise.sets === 1 ? "set" : "sets"} ×{" "}
                             {exercise.reps} {exercise.reps === 1 ? "rep" : "reps"}
-                            {exercise.weight != null && exercise.weight > 0
-                              ? ` · ${exercise.weight.toLocaleString(undefined, {
-                                  maximumFractionDigits: 2,
-                                })} kg`
+                            {getFitnessWeightText(exercise.weightSpec, exercise.weight)
+                              ? ` · ${getFitnessWeightText(exercise.weightSpec, exercise.weight)} kg`
                               : " · No weight"}
                           </span>
                         </div>
@@ -1289,21 +1343,22 @@ async function deleteExercise(exerciseId: string) {
                   />
                 </label>
                 <label className="academics-field fitness-weight-field">
-                <span>Weight (kg, optional)</span>
-                <input
-                    type="number"
-                    min="0.01"
-                    max="1000"
-                    step="any"
+                  <span>Weight (kg, optional)</span>
+                  <input
+                    type="text"
+                    inputMode="text"
+                    maxLength={64}
                     value={exerciseDraft.weight}
                     onChange={(event) =>
-                    setExerciseDraft((current) => ({
+                      setExerciseDraft((current) => ({
                         ...current,
                         weight: event.target.value,
-                    }))
+                      }))
                     }
-                    placeholder="e.g. 12.5"
-                />
+                    placeholder="30, 40-55"
+                    aria-describedby="fitness-add-weight-help"
+                  />
+                  <small id="fitness-add-weight-help">Use a value, range, or comma-separated list.</small>
                 </label>
               </div>
 
@@ -1335,14 +1390,22 @@ async function deleteExercise(exerciseId: string) {
         </section>
 
         <aside className="panel fitness-history-panel">
-          <div className="fitness-section-heading">
+          <div className="fitness-section-heading fitness-history-heading">
             <div>
               <h2>Workout history</h2>
               <p>Choose a date to review that session.</p>
             </div>
+            <button
+              type="button"
+              className="fitness-history-toggle"
+              aria-expanded={!workoutHistoryCollapsed}
+              onClick={() => setWorkoutHistoryCollapsed((current) => !current)}
+            >
+              {workoutHistoryCollapsed ? <><ChevronDown size={14} /> Show history</> : <><ChevronUp size={14} /> Hide history</>}
+            </button>
           </div>
 
-          {recentDays.length === 0 ? (
+          {!workoutHistoryCollapsed && (recentDays.length === 0 ? (
             <div className="fitness-history-empty">
               Your saved workout days will appear here.
             </div>
@@ -1379,7 +1442,7 @@ async function deleteExercise(exerciseId: string) {
                 );
               })}
             </div>
-          )}
+          ))}
         </aside>
       </div>
 
