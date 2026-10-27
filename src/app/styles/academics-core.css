@@ -1,0 +1,684 @@
+/* Academics workspace */
+
+.academics-workspace {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 21px;
+}
+
+.academics-page-heading,
+.academics-list-heading,
+.academics-form-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.academics-page-heading h1 {
+  margin: 7px 0 5px;
+  font-size: clamp(29px, 3vw, 39px);
+  font-weight: 750;
+  letter-spacing: -1.3px;
+  line-height: 1.25;
+}
+
+.academics-page-heading p,
+.academics-list-heading p,
+.academics-form-heading p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.academics-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.academics-summary-card {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 13px;
+  padding: 19px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.academics-summary-icon,
+.academics-course-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.academics-summary-card > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.academics-summary-label {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .8px;
+}
+
+.academics-summary-card strong {
+  font-size: 24px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.academics-create-form {
+  padding: 25px;
+}
+
+.academics-form-heading {
+  align-items: center;
+  margin-bottom: 21px;
+}
+
+.academics-form-heading h2,
+.academics-list-heading h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.academics-form-heading > svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.academics-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.academics-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.academics-field > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.academics-field input,
+.academics-field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.academics-field input::placeholder {
+  color: var(--muted);
+}
+
+.academics-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.academics-cancel {
+  border-color: var(--border);
+  background: transparent;
+  color: var(--muted);
+}
+
+.academics-cancel:hover {
+  background: var(--surface-muted);
+  color: var(--foreground);
+}
+
+.academics-list-heading {
+  align-items: center;
+}
+
+.academics-course-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 17px;
+}
+
+.academics-course-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 22px;
+  transition: border-color 160ms ease;
+}
+
+.academics-course-card:hover {
+  border-color: var(--accent);
+}
+
+.academics-course-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+/* Course edit controls */
+.academics-course-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.academics-edit {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.academics-edit:hover {
+  border-color: var(--border);
+  background: var(--surface-muted);
+  color: var(--accent);
+}
+
+.academics-edit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.academics-edit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.academics-course-edit-form {
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-muted);
+}
+
+.academics-course-edit-form .academics-form-heading {
+  margin-bottom: 18px;
+}
+
+.academics-course-edit-form .academics-form-actions {
+  margin-top: 16px;
+}
+
+.academics-course-edit-form .primary-button:disabled,
+.academics-course-edit-form .text-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.academics-delete,
+.academics-delete-assessment {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.academics-delete {
+  width: 34px;
+  height: 34px;
+}
+
+.academics-delete:hover,
+.academics-delete-assessment:hover {
+  border-color: rgba(255, 135, 146, .25);
+  background: rgba(255, 135, 146, .1);
+  color: var(--danger);
+}
+
+.academics-course-code {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 16px;
+  overflow: hidden;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: var(--surface-muted);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.academics-course-card h3 {
+  margin: 9px 0 4px;
+  overflow-wrap: anywhere;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.academics-course-progress-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 21px;
+  font-size: 11px;
+}
+
+.academics-course-progress-heading > span {
+  color: var(--muted);
+}
+
+.academics-course-progress-heading strong {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.academics-progress-track {
+  height: 6px;
+  margin-top: 9px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-muted);
+}
+
+.academics-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 180ms ease;
+}
+
+.academics-assessment-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 23px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--border);
+}
+
+.academics-assessment-heading strong {
+  font-size: 12px;
+}
+
+.academics-assessment-heading > span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.academics-no-assessments {
+  margin: 13px 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.academics-assessment-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.academics-assessment-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.academics-assessment-check {
+  display: grid;
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: #051219;
+}
+
+.academics-assessment-check:hover {
+  border-color: var(--accent);
+}
+
+.academics-assessment-check.checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.academics-assessment-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.academics-assessment-copy > strong {
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.academics-assessment-row.completed
+  .academics-assessment-copy > strong {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--border);
+}
+
+.academics-assessment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.assessment-type,
+.assessment-due-status {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 4px 7px;
+  border-radius: 6px;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.assessment-type {
+  background: var(--surface-muted);
+  color: var(--muted);
+}
+
+.type-assignment {
+  background: rgba(119, 197, 238, .12);
+  color: var(--accent);
+}
+
+.type-quiz {
+  background: rgba(147, 132, 226, .13);
+  color: #a99cf0;
+}
+
+.type-viva {
+  background: rgba(105, 214, 177, .1);
+  color: var(--success);
+}
+
+.type-presentation {
+  background: rgba(232, 181, 105, .12);
+  color: #d7ac6d;
+}
+
+.type-labreport {
+  background: rgba(119, 197, 238, .12);
+  color: var(--accent);
+}
+
+.assessment-due {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.assessment-due-status {
+  background: rgba(232, 181, 105, .12);
+  color: #d7ac6d;
+}
+
+.assessment-due-status.overdue {
+  background: rgba(255, 135, 146, .12);
+  color: var(--danger);
+}
+
+.academics-delete-assessment {
+  width: 29px;
+  height: 29px;
+  opacity: .7;
+}
+
+.academics-delete-assessment:hover {
+  opacity: 1;
+}
+
+.academics-assessment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--background);
+}
+
+.academics-assessment-form .academics-form-grid {
+  gap: 12px;
+}
+
+.academics-assessment-form .academics-form-actions {
+  margin-top: 0;
+}
+
+.academics-add-assessment {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  gap: 6px;
+  margin-top: auto;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 11px;
+  transition: background 150ms ease;
+}
+
+.academics-assessment-list + .academics-add-assessment,
+.academics-no-assessments + .academics-add-assessment {
+  margin-top: 14px;
+}
+
+.academics-add-assessment:hover {
+  background: var(--accent-soft);
+}
+
+.academics-empty {
+  display: flex;
+  min-height: 270px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+}
+
+.academics-empty-icon {
+  display: grid;
+  width: 55px;
+  height: 55px;
+  margin-bottom: 13px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.academics-empty h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.academics-empty p {
+  max-width: 400px;
+  margin: 8px 0 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.academics-loading {
+  padding: 25px;
+  color: var(--muted);
+}
+
+.academics-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.academics-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+@media (min-width: 1450px) {
+  .academics-course-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .academics-summary {
+    gap: 10px;
+  }
+
+  .academics-summary-card {
+    gap: 9px;
+    padding: 13px;
+  }
+
+  .academics-summary-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .academics-summary-label {
+    font-size: 8px;
+    letter-spacing: .4px;
+  }
+
+  .academics-course-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .academics-workspace {
+    gap: 15px;
+  }
+
+  .academics-page-heading {
+    gap: 10px;
+  }
+
+  .academics-page-heading h1 {
+    font-size: 28px;
+  }
+
+  .academics-page-heading p {
+    max-width: 245px;
+    font-size: 11px;
+  }
+
+  .academics-page-heading > .text-button {
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .academics-summary {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .academics-summary-card {
+    padding: 13px;
+  }
+
+  .academics-summary-card strong {
+    font-size: 21px;
+  }
+
+  .academics-create-form,
+  .academics-course-card {
+    padding: 17px;
+  }
+
+  .academics-form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .academics-list-heading h2 {
+    font-size: 17px;
+  }
+
+  .academics-course-card h3 {
+    font-size: 18px;
+  }
+
+  .academics-assessment-form .academics-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

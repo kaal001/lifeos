@@ -1,0 +1,622 @@
+/* My Day — Habit editing */
+.habit-check-in-button {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.habit-check-in-button:hover .habit-copy strong {
+  color: var(--accent);
+}
+
+.habit-edit-action {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.habit-edit-action:hover:not(:disabled) {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--foreground);
+}
+
+.habit-edit-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.habit-edit-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+.habit-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.habit-edit-form .planner-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 7px 9px;
+}
+
+.habit-edit-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.habit-edit-actions button {
+  min-height: 38px;
+}
+
+@media (max-width: 600px) {
+  .habit-row {
+    gap: 7px;
+  }
+
+  .habit-check-in-button {
+    gap: 8px;
+  }
+
+  .habit-edit-action {
+    width: 30px;
+    height: 30px;
+  }
+
+  .habit-edit-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .habit-edit-actions {
+    grid-column: 1;
+    justify-content: flex-start;
+  }
+}
+.habit-stop-action:hover:not(:disabled) {
+  border-color: rgba(255, 135, 146, 0.25);
+  background: rgba(255, 135, 146, 0.1);
+  color: var(--danger);
+}
+/* Academics: assessment edit actions and responsive layout */
+.academics-assessment-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(118px, 142px) 48px !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.academics-assessment-row > .academics-assessment-main-row {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-width: 0 !important;
+}
+
+.academics-assessment-row > .academics-assessment-marks {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  width: 100% !important;
+}
+
+.academics-assessment-actions {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 3px !important;
+  width: 48px !important;
+  min-width: 48px !important;
+  height: 28px !important;
+}
+
+.academics-assessment-actions > button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 22px !important;
+  width: 22px !important;
+  min-width: 22px !important;
+  height: 28px !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+
+.academics-assessment-actions > .academics-edit-assessment {
+  border: 1px solid rgba(116, 157, 208, 0.24);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.academics-assessment-actions > .academics-edit-assessment:hover {
+  background: rgba(116, 157, 208, 0.12);
+  border-color: rgba(116, 157, 208, 0.5);
+}
+
+.academics-assessment-actions > .academics-edit-assessment:focus-visible,
+.academics-assessment-actions > .academics-delete-assessment:focus-visible {
+  outline: 2px solid var(--accent, #6b9cff);
+  outline-offset: 2px;
+}
+
+/* Assessment details form */
+.academics-assessment-edit-form {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  gap: 9px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.academics-assessment-edit-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  font-size: 11px !important;
+}
+
+.academics-assessment-edit-field > span {
+  font-size: 10px !important;
+  line-height: 1.4 !important;
+}
+
+.academics-assessment-edit-field > input,
+.academics-assessment-edit-field > select {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 34px !important;
+  padding: 7px 8px !important;
+  border: 1px solid rgba(116, 157, 208, 0.3) !important;
+  border-radius: 7px !important;
+  background: rgba(116, 157, 208, 0.06) !important;
+  color: inherit !important;
+  font: inherit !important;
+  font-size: 12px !important;
+  box-sizing: border-box !important;
+}
+
+.academics-assessment-edit-field > input:focus,
+.academics-assessment-edit-field > select:focus {
+  outline: 2px solid var(--accent, #6b9cff);
+  outline-offset: 1px;
+}
+
+.academics-assessment-edit-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 9px !important;
+  min-width: 0 !important;
+}
+
+.academics-assessment-edit-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+}
+
+.academics-assessment-edit-actions > button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 32px !important;
+  padding: 6px 10px !important;
+  box-sizing: border-box !important;
+}
+
+.academics-assessment-edit-form .academics-assessment-error {
+  overflow-wrap: anywhere;
+}
+
+/* While editing, put the form first and marks underneath it */
+.academics-assessment-row:has(.academics-assessment-edit-form) {
+  grid-template-columns: minmax(0, 1fr) 48px !important;
+  align-items: start !important;
+}
+
+.academics-assessment-row:has(.academics-assessment-edit-form)
+  > .academics-assessment-main-row {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  align-items: flex-start !important;
+}
+
+.academics-assessment-row:has(.academics-assessment-edit-form)
+  > .academics-assessment-marks {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+}
+
+.academics-assessment-row:has(.academics-assessment-edit-form)
+  > .academics-assessment-actions {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  justify-content: flex-end !important;
+}
+
+@media (min-width: 681px) {
+  .academics-assessment-edit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .academics-assessment-row {
+    grid-template-columns: minmax(0, 1fr) minmax(124px, 152px) 48px !important;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .academics-assessment-row {
+    grid-template-columns: minmax(0, 1fr) minmax(108px, 124px) 48px !important;
+    gap: 5px !important;
+  }
+}
+/* Fitness: exercise Edit and Delete actions */
+.fitness-exercise-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.fitness-edit-exercise {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  color: var(--muted, #a6b2ca);
+  background: transparent;
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.fitness-edit-exercise:hover {
+  color: var(--accent, #77c5ee);
+  background: rgba(119, 197, 238, 0.1);
+}
+
+.fitness-edit-exercise:focus-visible,
+.fitness-delete-exercise:focus-visible {
+  outline: 2px solid var(--accent, #77c5ee);
+  outline-offset: 2px;
+}
+
+/* Inline exercise editing form */
+.fitness-exercise-edit-form {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line, rgba(116, 157, 208, 0.24));
+  border-radius: 10px;
+  background: rgba(116, 157, 208, 0.035);
+  box-sizing: border-box;
+}
+
+.fitness-exercise-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  font-size: 11px;
+}
+
+.fitness-exercise-edit-field > span {
+  color: var(--muted, #a6b2ca);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.fitness-exercise-edit-field > input {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 8px 9px;
+  border: 1px solid var(--line, rgba(116, 157, 208, 0.28));
+  border-radius: 7px;
+  color: inherit;
+  background: var(--input-bg, rgba(116, 157, 208, 0.06));
+  font: inherit;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.fitness-exercise-edit-field > input:focus-visible {
+  outline: 2px solid var(--accent, #77c5ee);
+  outline-offset: 1px;
+}
+
+.fitness-exercise-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.fitness-exercise-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.fitness-exercise-edit-actions > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: auto;
+  min-width: 0;
+  min-height: 34px;
+  padding: 7px 10px;
+  box-sizing: border-box;
+}
+
+.fitness-exercise-edit-actions > button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Make the edit form comfortable on mobile */
+@media (max-width: 480px) {
+  .fitness-exercise-edit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fitness-exercise-edit-field:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .fitness-exercise-edit-form {
+    padding: 10px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .fitness-exercise-edit-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fitness-exercise-edit-field:last-child {
+    grid-column: auto;
+  }
+}
+/* Personal Growth: inline milestone editing */
+.personal-growth-milestone-edit-form {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid var(--line, rgba(116, 157, 208, 0.24));
+  border-radius: 9px;
+  background: rgba(116, 157, 208, 0.035);
+  box-sizing: border-box;
+}
+
+.personal-growth-milestone-edit-form > input {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  padding: 7px 9px;
+  border: 1px solid var(--line, rgba(116, 157, 208, 0.28));
+  border-radius: 7px;
+  color: inherit;
+  background: var(--input-bg, rgba(116, 157, 208, 0.06));
+  font: inherit;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.personal-growth-milestone-edit-form > input:focus-visible {
+  outline: 2px solid var(--accent, #77c5ee);
+  outline-offset: 1px;
+}
+
+.personal-growth-milestone-edit-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.personal-growth-milestone-edit-actions > button {
+  flex: 0 0 29px;
+}
+
+.personal-growth-milestone-edit-actions > button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.personal-growth-form-error {
+  margin: 0;
+  color: #e99aa3;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.personal-growth-milestone-edit-form:focus-within {
+  border-color: rgba(119, 197, 238, 0.45);
+}
+
+.personal-growth-milestone-edit-actions > button:focus-visible {
+  outline: 2px solid var(--accent, #77c5ee);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .personal-growth-milestone-edit-form {
+    padding: 8px;
+  }
+
+  .personal-growth-milestone-edit-actions {
+    gap: 5px;
+  }
+}
+/* Personal Growth: project and resource link editing */
+.personal-growth-link-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+.personal-growth-link-edit-form {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  margin: 0;
+}
+
+/* Keep link editing comfortable on small screens */
+@media (max-width: 480px) {
+  .personal-growth-link-edit-form {
+    padding: 9px;
+  }
+
+  .personal-growth-link-edit-form .personal-growth-inline-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+/* Mobile account access */
+.mobile-account-container {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .mobile-account-container {
+    position: relative;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .mobile-account-trigger {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--foreground);
+    cursor: pointer;
+  }
+
+  .mobile-account-trigger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .mobile-account-avatar {
+    display: grid;
+    width: 27px;
+    height: 27px;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--surface-muted);
+    color: var(--foreground);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .mobile-account-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 1000;
+    width: min(250px, calc(100vw - 24px));
+    padding: 12px;
+    overflow-wrap: anywhere;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--foreground);
+    box-shadow: 0 12px 30px rgb(0 0 0 / 24%);
+  }
+
+  .mobile-account-menu .account-menu-heading {
+    padding: 6px 4px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-account-menu .account-menu-item {
+    margin-top: 8px;
+    text-align: left;
+  }
+}
+/* LifeOS brand icon */
+.brand-mark {
+  background: url("/branding/lifeos-logo-transparent.webp") center / contain no-repeat;
+  color: transparent;
+  font-size: 0;
+  box-shadow: none;
+}
+/* Keep workout date label readable on the dark session card. */
+.fitness-date-controls .academics-field > span {
+  color: #a6b2ca;
+}

@@ -1,4 +1,5 @@
 "use client";
+import dynamic from "next/dynamic";
 
 import {
   useEffect,
@@ -9,10 +10,6 @@ import {
 } from "react";
 import { useConfirmDialog } from "./confirm-dialog-provider";
 import { usePathname, useRouter } from "next/navigation";
-import GoalsWorkspace from "./goals-workspace";
-import FitnessWorkspace from "./fitness-workspace";
-import PersonalGrowthWorkspace from "./personal-growth-workspace";
-import AnalyticsWorkspace from "./analytics-workspace";
 import { createClient } from "@/lib/supabase/client";
 import {
   Activity,
@@ -42,8 +39,6 @@ import {
   TrendingUp,
   Trash2,
 } from "lucide-react";
-import TrackerWorkspace from "./tracker-workspace";
-import AcademicsWorkspace from "./academics-workspace";
 const subscribeToNothing = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
@@ -117,6 +112,57 @@ function isTask(value: unknown): value is Task {
     typeof task.completed === "boolean" &&
     typeof task.date === "string"
   );
+}
+
+const CLOUD_REQUEST_TIMEOUT_MS = 12_000;
+
+async function withRequestTimeout<T>(
+  label: string,
+  request: () => PromiseLike<T>,
+): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      Promise.resolve().then(request),
+      new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => {
+          reject(new Error(`${label} timed out after ${CLOUD_REQUEST_TIMEOUT_MS / 1000} seconds.`));
+        }, CLOUD_REQUEST_TIMEOUT_MS);
+      }),
+    ]);
+  } finally {
+    if (timeoutId !== undefined) clearTimeout(timeoutId);
+  }
+}
+
+async function withTimedQuery<T>(
+  label: string,
+  request: (signal: AbortSignal) => PromiseLike<T>,
+): Promise<T> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    CLOUD_REQUEST_TIMEOUT_MS,
+  );
+
+  try {
+    const result = await request(controller.signal);
+
+    if (controller.signal.aborted) {
+      throw new Error(`${label} timed out after ${CLOUD_REQUEST_TIMEOUT_MS / 1000} seconds.`);
+    }
+
+    return result;
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new Error(`${label} timed out after ${CLOUD_REQUEST_TIMEOUT_MS / 1000} seconds.`);
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 const initialHabits: Habit[] = [
@@ -220,6 +266,42 @@ type WeeklyActivityDay = {
   value: number;
 };
 
+const WorkspaceLoading = () => (
+  <div className="cloud-load-status" role="status">
+    Loading workspace...
+  </div>
+);
+
+const GoalsWorkspace = dynamic(
+  () => import("@/features/goals/goals-workspace"),
+  { loading: WorkspaceLoading },
+);
+
+const FitnessWorkspace = dynamic(
+  () => import("@/features/fitness/fitness-workspace"),
+  { loading: WorkspaceLoading },
+);
+
+const PersonalGrowthWorkspace = dynamic(
+  () => import("@/features/personal-growth/personal-growth-workspace"),
+  { loading: WorkspaceLoading },
+);
+
+const AnalyticsWorkspace = dynamic(
+  () => import("@/features/analytics/analytics-workspace"),
+  { loading: WorkspaceLoading },
+);
+
+const TrackerWorkspace = dynamic(
+  () => import("@/features/trackers/tracker-workspace"),
+  { loading: WorkspaceLoading },
+);
+
+const AcademicsWorkspace = dynamic(
+  () => import("@/features/academics/academics-workspace"),
+  { loading: WorkspaceLoading },
+);
+
 export default function Home() {
     const { requestConfirmation } = useConfirmDialog();
   const [theme, setTheme] = useState<Theme>("dark");
@@ -259,7 +341,10 @@ const activeSection = isMounted
   ? pathSections[pathname] ?? "Overview"
   : "Overview";
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [habitsLoading, setHabitsLoading] = useState(true);
+  const [isCloudDataLoading, setIsCloudDataLoading] = useState(true);
+  const [cloudDataLoadWarning, setCloudDataLoadWarning] = useState<string | null>(null);
+  const [cloudDataRetryCount, setCloudDataRetryCount] = useState(0);
+  const [habitCheckinUnavailable, setHabitCheckinUnavailable] = useState(false);
   const [newHabit, setNewHabit] = useState("");
   const [editingHabitId, setEditingHabitId] = useState<string | null>(null);
   const [editHabitTitle, setEditHabitTitle] = useState("");
@@ -335,15 +420,43 @@ useEffect(() => {
   let cancelled = false;
 
   async function loadCloudData() {
+    setIsCloudDataLoading(true);
+    setCloudDataLoadWarning(null);
+
+    const recordFailure = (label: string, error: unknown) => {
+      console.error(`LifeOS could not load ${label}:`, error);
+      if (!cancelled) {
+        setCloudDataLoadWarning(
+          "Some LifeOS data could not be loaded. Check your connection and retry; other successfully loaded data will remain available.",
+        );
+      }
+    };
+
+    async function loadQueryData<T>(
+      label: string,
+      request: (signal: AbortSignal) => PromiseLike<{
+        data: T | null;
+        error: unknown;
+      }>,
+    ): Promise<{ data: T | null; error: unknown | null }> {
+      try {
+        const result = await withTimedQuery(label, request);
+        if (result.error) return { data: null, error: result.error };
+        return { data: result.data, error: null };
+      } catch (error) {
+        return { data: null, error };
+      }
+    }
+
     try {
       const savedTheme = document.documentElement.dataset.theme;
-
-      if (savedTheme === "light" || savedTheme === "dark") {
-        setTheme(savedTheme);
-      }
+      if (savedTheme === "light" || savedTheme === "dark") setTheme(savedTheme);
 
       const now = new Date();
       const currentDateKey = getDateKey(now);
+      const weekStartDate = new Date(now);
+      weekStartDate.setDate(weekStartDate.getDate() - 6);
+      const weekStartKey = getDateKey(weekStartDate);
 
       setTodayKey(currentDateKey);
       setToday(
@@ -360,187 +473,258 @@ useEffect(() => {
           day: "numeric",
         }),
       );
+
       const supabase = createClient();
+      const authResult = await withRequestTimeout(
+        "Account session check",
+        () => supabase.auth.getSession(),
+      );
 
       const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+        data: { session },
+        error: sessionError,
+      } = authResult;
 
-      if (userError) throw userError;
+      if (sessionError) throw sessionError;
 
-if (!user) {
-  if (!cancelled) {
-    setCloudUserId(null);
-    setAccountName("Your account");
-    setDisplayNameDraft("Your account");
-    setAccountEmail("");
-    setTasks([]);
-    setHabits([]);
-    setWeeklyCheckInCount(null);
-    setWeeklyActivity([]);
-    setPracticeMinutesToday(null);
-    setCompletedCheckInDates([]);
-  }
-  return;
-}
+      const user = session?.user ?? null;
 
-const metadataName = user.user_metadata?.display_name;
+      if (!user) {
+        if (!cancelled) {
+          setCloudUserId(null);
+          setAccountName("Your account");
+          setDisplayNameDraft("Your account");
+          setAccountEmail("");
+          setTasks([]);
+          setHabits([]);
+          setWeeklyCheckInCount(null);
+          setWeeklyActivity([]);
+          setPracticeMinutesToday(null);
+          setCompletedCheckInDates([]);
+          setHabitCheckinUnavailable(false);
+          setCloudDataLoadWarning(null);
+        }
+        return;
+      }
 
-const fallbackName =
-  typeof metadataName === "string" && metadataName.trim()
-    ? metadataName.trim()
-    : user.email?.split("@")[0] || "Your account";
+      const metadataName = user.user_metadata?.display_name;
+      const fallbackName =
+        typeof metadataName === "string" && metadataName.trim()
+          ? metadataName.trim()
+          : user.email?.split("@")[0] || "Your account";
 
-  if (!cancelled) {
-    setCloudUserId(user.id);
-    setAccountName(fallbackName);
-    setDisplayNameDraft(fallbackName);
-    setAccountEmail(user.email ?? "");
-  }
+      if (!cancelled) {
+        setCloudUserId(user.id);
+        setAccountName(fallbackName);
+        setDisplayNameDraft(fallbackName);
+        setAccountEmail(user.email ?? "");
+      }
 
-const { data: profileRow, error: profileError } = await supabase
-  .from("profiles")
-  .select("display_name, date_of_birth")
-  .eq("id", user.id)
-  .maybeSingle();
-
-    if (profileError) {
-      console.error("Could not load profile name:", profileError);
-    } else if (
-      !cancelled &&
-      typeof profileRow?.display_name === "string" &&
-      profileRow.display_name.trim()
-    ) {
-      const profileName = profileRow.display_name.trim();
-      setAccountName(profileName);
-      setDisplayNameDraft(profileName);
-    }
-    if (!cancelled && !profileError) {
-  setDateOfBirthDraft(
-    typeof profileRow?.date_of_birth === "string"
-      ? profileRow.date_of_birth
-      : "",
+      // Each workspace data group loads independently. One slow or failed
+      // read must not prevent the other successful results from rendering.
+      const loadProfile = async () => {
+      const result = await loadQueryData<{
+        display_name: string | null;
+        date_of_birth: string | null;
+      }>(
+        "profile",
+        (signal) =>
+          supabase
+            .from("profiles")
+            .select("display_name, date_of_birth")
+            .eq("id", user.id)
+            .abortSignal(signal)
+            .maybeSingle(),
       );
-    }
-      const [taskResult, habitResult] = await Promise.all([
-        supabase
-          .from("tasks")
-          .select("id, title, priority, completed, task_date, created_at")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false }),
 
-        supabase
-          .from("habits")
-          .select("id, title, meta, icon_key, sort_order")
-          .eq("user_id", user.id)
-          .eq("is_active", true)
-          .order("sort_order", { ascending: true }),
-      ]);
+      if (result.error) {
+        recordFailure("profile", result.error);
+        return;
+      }
 
-      if (taskResult.error) {
-        console.error("Could not load cloud tasks:", taskResult.error);
-      } else if (!cancelled) {
-        const cloudTasks: Task[] = (taskResult.data ?? []).map((row) => ({
+      if (cancelled) return;
+
+      const profileRow = result.data;
+
+      if (
+        typeof profileRow?.display_name === "string" &&
+        profileRow.display_name.trim()
+      ) {
+        const profileName = profileRow.display_name.trim();
+        setAccountName(profileName);
+        setDisplayNameDraft(profileName);
+      }
+
+      setDateOfBirthDraft(
+        typeof profileRow?.date_of_birth === "string"
+          ? profileRow.date_of_birth
+          : "",
+      );
+    };
+
+      const loadTasks = async () => {
+        const result = await loadQueryData(
+          "tasks",
+          (signal) => supabase
+            .from("tasks")
+            .select("id, title, priority, completed, task_date, created_at")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .abortSignal(signal),
+        );
+
+        if (result.error) {
+          recordFailure("tasks", result.error);
+          return;
+        }
+        if (cancelled) return;
+
+        const cloudTasks: Task[] = (result.data ?? []).map((row) => ({
           id: row.id,
           title: row.title,
           priority: row.priority as Priority,
           completed: row.completed,
           date: row.task_date,
         }));
-
         setTasks(cloudTasks.filter(isTask));
-      }
+      };
 
-      if (habitResult.error) {
-        throw habitResult.error;
-      }
+      const loadHabitsAndCheckins = async () => {
+        const [habitResult, checkinResult] = await Promise.all([
+          loadQueryData(
+            "habits",
+            (signal) => supabase
+              .from("habits")
+              .select("id, title, meta, icon_key, sort_order")
+              .eq("user_id", user.id)
+              .eq("is_active", true)
+              .order("sort_order", { ascending: true })
+              .abortSignal(signal),
+          ),
+          loadQueryData(
+            "today's habit check-ins",
+            (signal) => supabase
+              .from("habit_checkins")
+              .select("habit_id, completed")
+              .eq("user_id", user.id)
+              .eq("checkin_date", currentDateKey)
+              .abortSignal(signal),
+          ),
+        ]);
 
-      let habitRows = habitResult.data ?? [];
-
-      // Seed the starter habits only when this account has none.
-      if (habitRows.length === 0) {
-        const starterRows = initialHabits.map((habit, index) => ({
-          id: habit.id,
-          user_id: user.id,
-          title: habit.title,
-          meta: habit.meta,
-          icon_key: habit.iconKey,
-          sort_order: index,
-          is_active: true,
-        }));
-
-        const { error: seedError } = await supabase
-          .from("habits")
-          .upsert(starterRows, {
-            onConflict: "user_id,id",
-            ignoreDuplicates: true,
-          });
-
-        if (seedError) {
-          throw seedError;
+        if (checkinResult.error) {
+          recordFailure("today's habit check-ins", checkinResult.error);
+          if (!cancelled) setHabitCheckinUnavailable(true);
+        } else if (!cancelled) {
+          setHabitCheckinUnavailable(false);
         }
 
-        const { data: refreshedHabits, error: refreshError } = await supabase
-          .from("habits")
-          .select("id, title, meta, icon_key, sort_order")
-          .eq("user_id", user.id)
-          .eq("is_active", true)
-          .order("sort_order", { ascending: true });
+        if (habitResult.error) {
+          recordFailure("habits", habitResult.error);
+          return;
+        }
 
-        if (refreshError) throw refreshError;
+        let habitRows = habitResult.data ?? [];
 
-        habitRows = refreshedHabits ?? [];
-      }
+        // Seed the starter habits only after a successful empty result.
+        if (habitRows.length === 0) {
+          try {
+            const starterRows = initialHabits.map((habit, index) => ({
+              id: habit.id,
+              user_id: user.id,
+              title: habit.title,
+              meta: habit.meta,
+              icon_key: habit.iconKey,
+              sort_order: index,
+              is_active: true,
+            }));
 
-      const { data: checkinRows, error: checkinError } = await supabase
-        .from("habit_checkins")
-        .select("habit_id, completed")
-        .eq("user_id", user.id)
-        .eq("checkin_date", currentDateKey);
+            const seedResult = await withTimedQuery(
+              "starter habit setup",
+              (signal) => supabase
+                .from("habits")
+                .upsert(starterRows, {
+                  onConflict: "user_id,id",
+                  ignoreDuplicates: true,
+                })
+                .abortSignal(signal),
+            );
 
-      if (checkinError) throw checkinError;
-      const weekStartDate = new Date(now);
-weekStartDate.setDate(weekStartDate.getDate() - 6);
+            if (seedResult.error) {
+              recordFailure("starter habit setup", seedResult.error);
+              return;
+            }
 
-const weekStartKey = getDateKey(weekStartDate);
+            const refreshResult = await loadQueryData(
+              "refreshed habits",
+              (signal) => supabase
+                .from("habits")
+                .select("id, title, meta, icon_key, sort_order")
+                .eq("user_id", user.id)
+                .eq("is_active", true)
+                .order("sort_order", { ascending: true })
+                .abortSignal(signal),
+            );
 
-const {
-  data: weeklyCheckinRows,
-  error: weeklyCheckinError,
-} = await supabase
-  .from("habit_checkins")
-  .select("habit_id, checkin_date")
-  .eq("user_id", user.id)
-  .eq("completed", true)
-  .gte("checkin_date", weekStartKey)
-  .lte("checkin_date", currentDateKey);
+            if (refreshResult.error) {
+              recordFailure("refreshed habits", refreshResult.error);
+              return;
+            }
 
-      if (weeklyCheckinError) {
-        console.error(
-          "Could not load weekly habit check-ins:",
-          weeklyCheckinError,
+            habitRows = refreshResult.data ?? [];
+          } catch (error) {
+            recordFailure("starter habit setup", error);
+            return;
+          }
+        }
+
+        if (cancelled) return;
+        const checkins = checkinResult.data ?? [];
+
+        setHabits(
+          habitRows.map((row) => ({
+            id: row.id,
+            title: row.title,
+            meta: row.meta ?? "Personal habit",
+            iconKey: row.icon_key ?? "circle-check",
+            icon: getHabitIcon(row.icon_key ?? "circle-check"),
+            done: checkinResult.error
+              ? false
+              : checkins.some(
+                  (checkin) =>
+                    checkin.habit_id === row.id && checkin.completed,
+                ),
+          })),
+        );
+      };
+
+      const loadWeeklyActivity = async () => {
+        const result = await loadQueryData(
+          "weekly habit activity",
+          (signal) => supabase
+            .from("habit_checkins")
+            .select("habit_id, checkin_date")
+            .eq("user_id", user.id)
+            .eq("completed", true)
+            .gte("checkin_date", weekStartKey)
+            .lte("checkin_date", currentDateKey)
+            .abortSignal(signal),
         );
 
-        if (!cancelled) {
-          setWeeklyCheckInCount(null);
-          setWeeklyActivity([]);
-          
+        if (result.error) {
+          recordFailure("weekly habit activity", result.error);
+          return;
         }
-      } else if (!cancelled) {
-        const rows = weeklyCheckinRows ?? [];
+        if (cancelled) return;
 
+        const rows = result.data ?? [];
         setWeeklyCheckInCount(rows.length);
 
         const dailyActivity = Array.from({ length: 7 }, (_, index) => {
           const date = new Date(now);
           date.setDate(now.getDate() - 6 + index);
-
           const dateKey = getDateKey(date);
-
-          const count = rows.filter(
-            (row) => row.checkin_date === dateKey,
-          ).length;
+          const count = rows.filter((row) => row.checkin_date === dateKey).length;
 
           return {
             day: date
@@ -550,120 +734,96 @@ const {
             value: 0,
           };
         });
-
-        const maxDailyCount = Math.max(
-          ...dailyActivity.map((day) => day.count),
-        );
+        const maxDailyCount = Math.max(...dailyActivity.map((day) => day.count));
 
         setWeeklyActivity(
           dailyActivity.map((day) => ({
             ...day,
-            value:
-              maxDailyCount === 0
-                ? 0
-                : Math.round((day.count / maxDailyCount) * 100),
+            value: maxDailyCount === 0 ? 0 : Math.round((day.count / maxDailyCount) * 100),
           })),
         );
-      }
-          const {
-        data: streakCheckinRows,
-        error: streakCheckinError,
-      } = await supabase
-        .from("habit_checkins")
-        .select("checkin_date")
-        .eq("user_id", user.id)
-        .eq("completed", true)
-        .lte("checkin_date", currentDateKey)
-        .order("checkin_date", { ascending: false });
+      };
 
-      if (streakCheckinError) {
-        console.error(
-          "Could not load habit history for streak:",
-          streakCheckinError,
+      const loadStreakHistory = async () => {
+        const result = await loadQueryData(
+          "habit streak history",
+          (signal) => supabase
+            .from("habit_checkins")
+            .select("checkin_date")
+            .eq("user_id", user.id)
+            .eq("completed", true)
+            .lte("checkin_date", currentDateKey)
+            .order("checkin_date", { ascending: false })
+            .abortSignal(signal),
         );
 
-        if (!cancelled) {
-          setCompletedCheckInDates(null);
+        if (result.error) {
+          recordFailure("habit streak history", result.error);
+          return;
         }
-      } else if (!cancelled) {
+        if (cancelled) return;
+
         setCompletedCheckInDates([
-          ...new Set(
-            (streakCheckinRows ?? []).map((row) => row.checkin_date),
-          ),
+          ...new Set((result.data ?? []).map((row) => row.checkin_date)),
         ]);
-      }
-      const {
-          data: practiceSessionRows,
-          error: practiceSessionError,
-        } = await supabase
-          .from("practice_sessions")
-          .select("minutes")
-          .eq("user_id", user.id)
-          .eq("practice_date", currentDateKey);
+      };
 
-        if (practiceSessionError) {
-          console.error(
-            "Could not load today's practice time:",
-            practiceSessionError,
-          );
-
-          if (!cancelled) {
-            setPracticeMinutesToday(null);
-          }
-        } else if (!cancelled) {
-          setPracticeMinutesToday(
-            (practiceSessionRows ?? []).reduce(
-              (total, row) =>
-                total +
-                (typeof row.minutes === "number" &&
-                Number.isFinite(row.minutes)
-                  ? row.minutes
-                  : 0),
-              0,
-            ),
-          );
-        }
-      // Restore today's saved habit check-ins after loading from Supabase.
-      const checkins = checkinRows ?? [];
-
-      if (!cancelled) {
-        setHabits(
-          habitRows.map((row) => ({
-            id: row.id,
-            title: row.title,
-            meta: row.meta ?? "Personal habit",
-            iconKey: row.icon_key ?? "circle-check",
-            icon: getHabitIcon(row.icon_key ?? "circle-check"),
-            done: checkins.some(
-              (checkin) =>
-                checkin.habit_id === row.id && checkin.completed,
-            ),
-          })),
+      const loadPracticeTime = async () => {
+        const result = await loadQueryData(
+          "today's practice time",
+          (signal) => supabase
+            .from("practice_sessions")
+            .select("minutes")
+            .eq("user_id", user.id)
+            .eq("practice_date", currentDateKey)
+            .abortSignal(signal),
         );
-      }
-        } catch (error) {
-          console.error("Unable to load LifeOS cloud data:", error);
 
-          if (!cancelled) {
-            setTasks([]);
-            setHabits([]);
-            setWeeklyCheckInCount(null);
-            setWeeklyActivity([]);
-            setPracticeMinutesToday(null);
-            setCompletedCheckInDates(null);
-          }
-        } finally {
-          if (!cancelled) {
-            setHabitsLoading(false);
-          }
+        if (result.error) {
+          recordFailure("today's practice time", result.error);
+          return;
         }
-      }
+        if (cancelled) return;
+
+        setPracticeMinutesToday(
+          (result.data ?? []).reduce(
+            (total, row) =>
+              total + (typeof row.minutes === "number" && Number.isFinite(row.minutes) ? row.minutes : 0),
+            0,
+          ),
+        );
+      };
+
+      // All independent reads start together. Isolate unexpected errors too,
+      // so one malformed response cannot stop the other groups from updating.
+      const runSafely = async (label: string, action: () => Promise<void>) => {
+        try {
+          await action();
+        } catch (error) {
+          recordFailure(label, error);
+        }
+      };
+
+      await Promise.all([
+        runSafely("profile", loadProfile),
+        runSafely("tasks", loadTasks),
+        runSafely("habits and check-ins", loadHabitsAndCheckins),
+        runSafely("weekly activity", loadWeeklyActivity),
+        runSafely("streak history", loadStreakHistory),
+        runSafely("practice time", loadPracticeTime),
+      ]);
+    } catch (error) {
+      recordFailure("your account session", error);
+    } finally {
+      if (!cancelled) setIsCloudDataLoading(false);
+    }
+  }
 
   void loadCloudData();
   return () => {
     cancelled = true;
   };
-  }, []);
+  }, [cloudDataRetryCount]);
   const completedHabits = habits.filter((habit) => habit.done).length;
   const progress =
     habits.length > 0
@@ -1683,6 +1843,28 @@ async function addTask(event: FormEvent<HTMLFormElement>) {
         </header>
 
         <div className="dashboard-content">
+          {!cloudDataLoadWarning && isCloudDataLoading && (
+            <div className="cloud-load-status" role="status">
+              Loading your LifeOS data. A slow connection may take a moment.
+            </div>
+          )}
+          {cloudDataLoadWarning && (
+            <div className="cloud-load-warning" role="alert">
+              <div>
+                <strong>Some data did not load</strong>
+                <p>{cloudDataLoadWarning}</p>
+              </div>
+              <button
+                className="text-button"
+                type="button"
+                onClick={() => setCloudDataRetryCount((count) => count + 1)}
+                disabled={isCloudDataLoading}
+              >
+                {isCloudDataLoading ? "Retrying..." : "Retry loading"}
+              </button>
+            </div>
+          )}
+
             {activeSection === "Fitness" ? (
               <FitnessWorkspace />
             ) : activeSection === "Trackers" ? (
@@ -2092,11 +2274,14 @@ async function addTask(event: FormEvent<HTMLFormElement>) {
                             className="habit-check-in-button"
                             type="button"
                             onClick={() => toggleHabit(habit.id)}
+                            disabled={habitCheckinUnavailable}
                             aria-pressed={habit.done}
                             aria-label={
-                              habit.done
-                                ? `Mark ${habit.title} as incomplete`
-                                : `Complete ${habit.title}`
+                              habitCheckinUnavailable
+                                ? `${habit.title} check-in status unavailable`
+                                : habit.done
+                                  ? `Mark ${habit.title} as incomplete`
+                                  : `Complete ${habit.title}`
                             }
                           >
                             <span
@@ -2113,7 +2298,11 @@ async function addTask(event: FormEvent<HTMLFormElement>) {
                             </span>
 
                             <span className="habit-status">
-                              {habit.done ? "Completed" : "Check in"}
+                              {habitCheckinUnavailable
+                                ? "Unavailable"
+                                : habit.done
+                                  ? "Completed"
+                                  : "Check in"}
                             </span>
                           </button>
 
@@ -2142,6 +2331,12 @@ async function addTask(event: FormEvent<HTMLFormElement>) {
                     </div>
                   ))}
                   </div>
+
+                  {habitCheckinUnavailable && (
+                    <p className="habit-checkin-warning" role="status">
+                      Today&apos;s check-in status is unavailable. Retry loading before changing a habit.
+                    </p>
+                  )}
 
                   <div className="panel-footer">
                     <span>

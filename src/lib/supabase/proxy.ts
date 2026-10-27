@@ -2,6 +2,21 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  const isPublicRoute =
+    pathname === "/" ||
+    pathname === "/login" ||
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password" ||
+    pathname.startsWith("/auth/");
+
+  // Public routes don't need a claims check.
+  // Keep /login in the auth flow so signed-in users can be redirected.
+  if (isPublicRoute && pathname !== "/login") {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -33,29 +48,21 @@ export async function updateSession(request: NextRequest) {
   );
 
   const { data } = await supabase.auth.getClaims();
-  const pathname = request.nextUrl.pathname;
 
-  const isPublicRoute =
-    pathname === "/" ||
-    pathname === "/login" ||
-    pathname === "/forgot-password" ||
-    pathname === "/reset-password" ||
-    pathname.startsWith("/auth/");
-
+  // Redirect unauthenticated users away from protected routes.
   if (!data?.claims && !isPublicRoute) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.search = "";
 
-    if (pathname !== "/") {
-      loginUrl.searchParams.set("next", pathname);
-    }
+    loginUrl.searchParams.set("next", pathname);
 
     const redirectResponse = NextResponse.redirect(loginUrl);
 
     supabaseResponse.cookies.getAll().forEach((cookie) => {
       redirectResponse.cookies.set(cookie);
     });
+
     for (const header of ["cache-control", "expires", "pragma"]) {
       const value = supabaseResponse.headers.get(header);
 
@@ -67,6 +74,7 @@ export async function updateSession(request: NextRequest) {
     return redirectResponse;
   }
 
+  // Redirect authenticated users away from the login page.
   if (data?.claims && pathname === "/login") {
     const redirectResponse = NextResponse.redirect(
       new URL("/dashboard", request.url),

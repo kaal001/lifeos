@@ -1,0 +1,579 @@
+/* ==========================================
+   LifeOS Fitness workspace
+   ========================================== */
+
+.fitness-workspace {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fitness-heading,
+.fitness-section-heading,
+.fitness-form-heading,
+.fitness-session-top,
+.fitness-date-controls,
+.fitness-progress-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.fitness-heading {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.fitness-heading h1 {
+  margin: 7px 0;
+}
+
+.fitness-heading p,
+.fitness-section-heading p,
+.fitness-form-heading p {
+  margin: 5px 0 0;
+  color: var(--muted, #a6b2ca);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.fitness-session-hero {
+  color: #eef1f7;
+  padding: 22px;
+  border: 1px solid rgba(116, 157, 208, 0.25);
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(116, 157, 208, 0.12),
+      transparent 48%
+    ),
+    var(--panel, #121e2b);
+  min-width: 0;
+}
+
+.fitness-session-top {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.fitness-session-icon,
+.fitness-summary-icon,
+.fitness-empty-icon,
+.fitness-history-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  color: #77c5ee;
+  background: rgba(119, 197, 238, 0.12);
+}
+
+.fitness-session-icon {
+  width: 46px;
+  height: 46px;
+}
+
+.fitness-session-heading {
+  min-width: 0;
+}
+
+.fitness-kicker {
+  color: #a6b2ca;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+}
+
+.fitness-session-heading h2 {
+  margin: 5px 0;
+  font-size: clamp(19px, 2.3vw, 27px);
+  overflow-wrap: anywhere;
+}
+
+.fitness-session-heading p {
+  margin: 0;
+  color: #a6b2ca;
+  font-size: 12px;
+}
+
+.fitness-date-controls {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.fitness-date-controls .academics-field {
+  width: min(260px, 100%);
+  min-width: 0;
+}
+
+.fitness-delete-day,
+.fitness-close-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted, #a6b2ca);
+  background: transparent;
+  border: 1px solid rgba(116, 157, 208, 0.25);
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.fitness-delete-day {
+  min-height: 38px;
+  padding: 8px 11px;
+  font-size: 11px;
+}
+
+.fitness-delete-day:hover,
+.fitness-close-button:hover {
+  color: #e99aa3;
+  border-color: rgba(233, 154, 163, 0.5);
+}
+
+.fitness-session-progress {
+  margin-top: 20px;
+}
+
+.fitness-progress-heading {
+  margin-bottom: 9px;
+  font-size: 12px;
+}
+
+.fitness-progress-heading strong {
+  color: #77c5ee;
+  font-variant-numeric: tabular-nums;
+}
+
+.fitness-progress-track {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: rgba(116, 157, 208, 0.16);
+}
+
+.fitness-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #749dd0, #77c5ee);
+  transition: width 180ms ease;
+}
+
+.fitness-session-progress > p {
+  margin: 8px 0 0;
+  color: #a6b2ca;
+  font-size: 10px;
+}
+
+.fitness-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.fitness-summary-card {
+  color: #eef1f7;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--line, rgba(116, 157, 208, 0.15));
+  border-radius: 14px;
+  background: var(--panel, #121e2b);
+}
+
+.fitness-summary-icon {
+  width: 38px;
+  height: 38px;
+}
+
+.fitness-summary-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fitness-summary-card > div > span {
+  color: #a6b2ca;
+  font-size: 9px;
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+.fitness-summary-card strong {
+  font-size: 21px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.fitness-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(240px, 0.9fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.fitness-checklist-panel,
+.fitness-history-panel,
+.fitness-form {
+  min-width: 0;
+  padding: 19px;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.fitness-section-heading {
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.fitness-section-heading h2,
+.fitness-form-heading h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.fitness-add-button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.fitness-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 30px 12px;
+}
+
+.fitness-empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 15px;
+}
+
+.fitness-empty-state h3 {
+  margin: 15px 0 6px;
+  font-size: 14px;
+}
+
+.fitness-empty-state p {
+  max-width: 360px;
+  margin: 0 0 14px;
+  color: var(--muted, #a6b2ca);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.fitness-exercise-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.fitness-exercise-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line, rgba(116, 157, 208, 0.15));
+}
+
+.fitness-exercise-row:first-child {
+  border-top: 1px solid var(--line, rgba(116, 157, 208, 0.15));
+}
+
+.fitness-exercise-check {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 23px;
+  width: 23px;
+  height: 23px;
+  border: 1px solid rgba(116, 157, 208, 0.5);
+  border-radius: 7px;
+  color: #10202c;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fitness-exercise-check.checked {
+  border-color: #77c5ee;
+  background: #77c5ee;
+}
+
+.fitness-exercise-copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.fitness-exercise-copy strong {
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.fitness-exercise-copy > span {
+  color: var(--muted, #a6b2ca);
+  font-size: 10px;
+}
+
+.fitness-exercise-row.completed .fitness-exercise-copy strong {
+  color: var(--muted, #a6b2ca);
+  text-decoration: line-through;
+}
+
+.fitness-delete-exercise {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--muted, #a6b2ca);
+  background: transparent;
+  cursor: pointer;
+}
+
+.fitness-delete-exercise:hover {
+  color: #e99aa3;
+  background: rgba(233, 154, 163, 0.08);
+}
+
+.fitness-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 15px;
+  border: 1px solid var(--line, rgba(116, 157, 208, 0.2));
+  background: var(--panel, #121e2b);
+}
+
+.fitness-form-heading {
+  align-items: flex-start;
+}
+
+.fitness-close-button {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+}
+
+.fitness-exercise-target-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.fitness-error {
+  margin: 0;
+  padding: 10px 12px;
+  color: #e99aa3;
+  border-radius: 9px;
+  background: rgba(233, 154, 163, 0.08);
+  border: 1px solid rgba(233, 154, 163, 0.25);
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.fitness-history-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.fitness-history-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 9px;
+  color: inherit;
+  border: 1px solid transparent;
+  border-bottom-color: var(--line, rgba(116, 157, 208, 0.15));
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.fitness-history-item:hover,
+.fitness-history-item.active {
+  border-color: rgba(116, 157, 208, 0.3);
+  background: rgba(116, 157, 208, 0.08);
+}
+
+.fitness-history-date {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+}
+
+.fitness-history-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.fitness-history-copy strong {
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.fitness-history-copy > span,
+.fitness-history-copy small {
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--muted, #a6b2ca);
+}
+
+.fitness-history-empty {
+  padding: 18px 0;
+  color: var(--muted, #a6b2ca);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.fitness-storage-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 0 2px;
+  color: var(--muted, #a6b2ca);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.fitness-storage-note svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.fitness-loading {
+  padding: 20px;
+}
+
+/* Tablet: make the history panel sit below the checklist. */
+@media (max-width: 1000px) {
+  .fitness-content-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fitness-history-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .fitness-history-item {
+    border: 1px solid var(--line, rgba(116, 157, 208, 0.15));
+  }
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+  .fitness-workspace {
+    gap: 14px;
+  }
+
+  .fitness-session-hero {
+    padding: 16px;
+  }
+
+  .fitness-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .fitness-summary-card {
+    gap: 9px;
+    padding: 12px;
+  }
+
+  .fitness-summary-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .fitness-summary-icon {
+    width: 33px;
+    height: 33px;
+  }
+
+  .fitness-summary-card strong {
+    font-size: 18px;
+  }
+
+  .fitness-checklist-panel,
+  .fitness-history-panel,
+  .fitness-form {
+    padding: 14px;
+  }
+
+  .fitness-heading .text-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .fitness-history-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fitness-date-controls {
+    align-items: flex-end;
+  }
+
+  .fitness-date-controls .academics-field {
+    flex: 1 1 180px;
+  }
+}
+/* Fitness exercise targets: sets, reps and optional weight */
+
+.fitness-exercise-target-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.fitness-exercise-target-grid .academics-field {
+  min-width: 0;
+  width: 100%;
+}
+
+.fitness-exercise-target-grid input {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 400px) {
+  .fitness-exercise-target-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .fitness-exercise-target-grid .fitness-weight-field {
+    grid-column: 1 / -1;
+  }
+}

@@ -1,0 +1,717 @@
+/* Goals and milestones workspace */
+
+.goals-workspace {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 21px;
+}
+
+.goals-page-heading,
+.goals-list-heading,
+.goals-form-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.goals-page-heading h1 {
+  margin: 7px 0 5px;
+  font-size: clamp(29px, 3vw, 39px);
+  font-weight: 750;
+  letter-spacing: -1.3px;
+  line-height: 1.25;
+}
+
+.goals-page-heading p,
+.goals-list-heading p,
+.goals-form-heading p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.goals-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.goals-summary-card {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 13px;
+  padding: 19px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.goals-summary-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.goals-summary-card > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.goals-summary-label {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .8px;
+}
+
+.goals-summary-card strong {
+  font-size: 24px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.goals-create-form {
+  padding: 25px;
+}
+
+.goals-form-heading {
+  align-items: center;
+  margin-bottom: 21px;
+}
+
+.goals-form-heading h2,
+.goals-list-heading h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.goals-form-heading > svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.goals-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.goals-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.goals-field-full {
+  grid-column: 1 / -1;
+}
+
+.goals-field > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.goals-field input,
+.goals-field select,
+.goals-field textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.goals-field input,
+.goals-field select {
+  min-height: 43px;
+}
+
+.goals-field textarea {
+  min-height: 88px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.goals-field input::placeholder,
+.goals-field textarea::placeholder {
+  color: var(--muted);
+}
+
+.goals-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.goals-cancel {
+  border-color: var(--border);
+  background: transparent;
+  color: var(--muted);
+}
+
+.goals-cancel:hover {
+  background: var(--surface-muted);
+  color: var(--foreground);
+}
+
+.goals-list-heading {
+  align-items: center;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 17px;
+}
+
+.goal-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 22px;
+}
+
+.goal-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.goal-edit {
+  margin-left: auto;
+}
+.goal-category {
+  max-width: 80%;
+  overflow: hidden;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.goal-delete,
+.goal-milestone-delete {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.goal-delete {
+  width: 34px;
+  height: 34px;
+}
+
+.goal-delete:hover,
+.goal-milestone-delete:hover {
+  border-color: rgba(255, 135, 146, .25);
+  background: rgba(255, 135, 146, .1);
+  color: var(--danger);
+}
+
+.goal-card h3 {
+  margin: 12px 0 4px;
+  overflow-wrap: anywhere;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.goal-description {
+  margin: 5px 0 8px;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.goal-date-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.goal-date-row > svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.goal-date-status {
+  margin-left: auto;
+  padding: 4px 7px;
+  border-radius: 6px;
+  background: var(--surface-muted);
+  font-size: 9px;
+}
+
+.goal-date-status.overdue {
+  background: rgba(255, 135, 146, .12);
+  color: var(--danger);
+}
+
+.goal-progress-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  font-size: 11px;
+}
+
+.goal-progress-heading > span {
+  color: var(--muted);
+}
+
+.goal-progress-heading strong {
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.goal-progress-track {
+  height: 7px;
+  margin-top: 9px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-muted);
+}
+
+.goal-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 180ms ease;
+}
+
+.goal-milestones-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--border);
+}
+
+.goal-milestones-heading strong {
+  font-size: 12px;
+}
+
+.goal-milestones-heading > span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.goal-no-milestones {
+  margin: 13px 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.goal-milestone-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.goal-milestone-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.goal-milestone-check {
+  display: grid;
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: #051219;
+}
+
+.goal-milestone-check.checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.goal-milestone-title {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+
+.goal-milestone-title.completed {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+/* Goal milestone editing */
+.goal-milestone-edit {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0.7;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.goal-milestone-edit:hover {
+  border-color: var(--border);
+  background: var(--surface-muted);
+  color: var(--accent);
+  opacity: 1;
+}
+
+.goal-milestone-edit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.goal-milestone-edit-form {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+}
+
+.goal-milestone-edit-form input {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  flex: 1;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 11px;
+}
+
+.goal-milestone-inline-save {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.goal-milestone-inline-save:hover {
+  background: var(--surface-muted);
+}
+
+.goal-milestone-inline-cancel {
+  flex-shrink: 0;
+  padding: 5px 7px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.goal-milestone-inline-cancel:hover {
+  background: var(--surface-muted);
+  color: var(--foreground);
+}
+
+.goal-milestone-inline-save:disabled,
+.goal-milestone-inline-cancel:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.goal-milestone-delete {
+  width: 29px;
+  height: 29px;
+  opacity: .7;
+}
+
+.goal-milestone-delete:hover {
+  opacity: 1;
+}
+/* Milestone reorder controls */
+.goal-milestone-order-controls {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.goal-milestone-move {
+  display: grid;
+  width: 25px;
+  height: 17px;
+  flex-shrink: 0;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.goal-milestone-move:hover:not(:disabled) {
+  background: var(--surface-muted);
+  color: var(--accent);
+}
+
+.goal-milestone-move:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+.goal-milestone-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.goal-milestone-form input {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.goal-add-milestone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 11px;
+}
+
+.goal-add-milestone:hover {
+  background: var(--accent-soft);
+}
+
+.goal-complete-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(105, 214, 177, .1);
+  color: var(--success);
+  font-size: 11px;
+}
+
+.goals-empty {
+  display: flex;
+  min-height: 270px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+}
+
+.goals-empty-icon {
+  display: grid;
+  width: 55px;
+  height: 55px;
+  margin-bottom: 13px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.goals-empty h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.goals-empty p {
+  max-width: 380px;
+  margin: 8px 0 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.goals-loading {
+  padding: 25px;
+  color: var(--muted);
+}
+
+.goals-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.goals-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+@media (min-width: 1450px) {
+  .goals-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .goals-summary {
+    gap: 10px;
+  }
+
+  .goals-summary-card {
+    gap: 9px;
+    padding: 13px;
+  }
+
+  .goals-summary-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .goals-summary-label {
+    font-size: 8px;
+    letter-spacing: .4px;
+  }
+
+  .goals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .goals-workspace {
+    gap: 15px;
+  }
+
+  .goals-page-heading {
+    gap: 10px;
+  }
+
+  .goals-page-heading h1 {
+    font-size: 28px;
+  }
+
+  .goals-page-heading p {
+    max-width: 245px;
+    font-size: 11px;
+  }
+
+  .goals-page-heading > .text-button {
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .goals-summary {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .goals-summary-card {
+    padding: 13px;
+  }
+
+  .goals-summary-card strong {
+    font-size: 21px;
+  }
+
+  .goals-create-form,
+  .goal-card {
+    padding: 17px;
+  }
+
+  .goals-form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .goals-field-full {
+    grid-column: auto;
+  }
+
+  .goals-list-heading h2 {
+    font-size: 17px;
+  }
+
+  .goal-card h3 {
+    font-size: 18px;
+  }
+}

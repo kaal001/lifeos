@@ -1,0 +1,600 @@
+/* LifeOS Tracker workspace */
+
+.tracker-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+  min-width: 0;
+}
+
+.tracker-page-heading,
+.tracker-list-heading,
+.tracker-form-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.tracker-page-heading h1 {
+  margin: 7px 0 5px;
+  font-size: clamp(29px, 3vw, 39px);
+  font-weight: 750;
+  letter-spacing: -1.3px;
+  line-height: 1.25;
+}
+
+.tracker-page-heading p,
+.tracker-list-heading p,
+.tracker-form-heading p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.tracker-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.tracker-summary-card {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 13px;
+  padding: 19px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.tracker-summary-icon,
+.tracker-type-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.tracker-summary-card > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tracker-summary-label {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 1px;
+}
+
+.tracker-summary-card strong {
+  font-size: 24px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.tracker-create-form {
+  padding: 25px;
+}
+
+.tracker-form-heading {
+  align-items: center;
+  margin-bottom: 21px;
+}
+
+.tracker-form-heading h2,
+.tracker-list-heading h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.tracker-form-heading > svg {
+  color: var(--accent);
+}
+
+.tracker-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.tracker-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.tracker-field > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.tracker-field input,
+.tracker-field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.tracker-field input::placeholder {
+  color: var(--muted);
+}
+
+.tracker-field input:disabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+
+.tracker-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.tracker-cancel {
+  border-color: var(--border);
+  background: transparent;
+  color: var(--muted);
+}
+
+.tracker-cancel:hover {
+  background: var(--surface-muted);
+  color: var(--foreground);
+}
+
+.tracker-list-heading {
+  align-items: center;
+}
+
+.tracker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 17px;
+}
+
+.tracker-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 22px;
+  transition: border-color 160ms ease;
+}
+
+.tracker-card:hover {
+  border-color: var(--accent);
+}
+
+.tracker-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tracker-delete {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.tracker-delete:hover {
+  border-color: rgba(255, 135, 146, .25);
+  background: rgba(255, 135, 146, .1);
+  color: var(--danger);
+}
+/* Tracker metadata editing */
+.tracker-edit {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  place-items: center;
+  margin-left: auto;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.tracker-edit:hover {
+  border-color: var(--border);
+  background: var(--surface-muted);
+  color: var(--accent);
+}
+
+.tracker-edit:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.tracker-edit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.tracker-metadata-edit {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-muted);
+}
+
+.tracker-metadata-edit .tracker-form-actions {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+}
+
+.tracker-metadata-edit .primary-button:disabled,
+.tracker-metadata-edit .text-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (max-width: 560px) {
+  .tracker-metadata-edit {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 13px;
+  }
+
+  .tracker-metadata-edit .tracker-form-actions {
+    justify-content: stretch;
+  }
+
+  .tracker-metadata-edit .tracker-form-actions > button {
+    flex: 1 1 auto;
+  }
+}
+
+.tracker-category {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 18px;
+  overflow: hidden;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: var(--surface-muted);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tracker-card h3 {
+  margin: 9px 0 3px;
+  overflow-wrap: anywhere;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.tracker-type-label {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.tracker-current-value {
+  display: flex;
+  min-height: 75px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 15px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--background);
+}
+
+.tracker-current-value strong {
+  overflow-wrap: anywhere;
+  font-size: 19px;
+  font-weight: 750;
+}
+
+.tracker-current-value > span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.tracker-target-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 17px;
+  font-size: 11px;
+}
+
+.tracker-target-row > span {
+  color: var(--muted);
+}
+
+.tracker-target-row strong {
+  text-align: right;
+  font-size: 11px;
+}
+
+.tracker-meter {
+  height: 6px;
+  margin-top: 9px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-muted);
+}
+
+.tracker-meter > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 180ms ease;
+}
+
+.tracker-history {
+  margin-top: 21px;
+}
+
+.tracker-history-heading {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 1.1px;
+}
+
+.tracker-history-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.tracker-history-day {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+
+.tracker-history-dot {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--muted);
+}
+
+.tracker-history-dot.recorded {
+  border-color: rgba(119, 197, 238, .35);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.tracker-history-dot.success {
+  border-color: rgba(105, 214, 177, .3);
+  background: rgba(105, 214, 177, .12);
+  color: var(--success);
+}
+
+.tracker-history-day small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.tracker-checkin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 19px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--background);
+}
+
+.tracker-checkin-form .tracker-form-actions {
+  margin-top: 7px;
+}
+
+.tracker-card-actions {
+  display: flex;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.tracker-checkin-button {
+  width: 100%;
+  min-height: 42px;
+}
+
+.tracker-loading {
+  padding: 25px;
+  color: var(--muted);
+}
+
+.tracker-empty {
+  display: flex;
+  min-height: 270px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+}
+
+.tracker-empty-icon {
+  display: grid;
+  width: 55px;
+  height: 55px;
+  margin-bottom: 13px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.tracker-empty h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.tracker-empty p {
+  max-width: 380px;
+  margin: 8px 0 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.tracker-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.tracker-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+@media (min-width: 1450px) {
+  .tracker-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .tracker-summary {
+    gap: 10px;
+  }
+
+  .tracker-summary-card {
+    gap: 9px;
+    padding: 13px;
+  }
+
+  .tracker-summary-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .tracker-summary-label {
+    font-size: 8px;
+    letter-spacing: .5px;
+  }
+
+  .tracker-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .tracker-workspace {
+    gap: 15px;
+  }
+
+  .tracker-page-heading {
+    gap: 10px;
+  }
+
+  .tracker-page-heading h1 {
+    font-size: 28px;
+  }
+
+  .tracker-page-heading p {
+    max-width: 245px;
+    font-size: 11px;
+  }
+
+  .tracker-page-heading > .text-button {
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .tracker-summary {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .tracker-summary-card {
+    padding: 13px;
+  }
+
+  .tracker-summary-card strong {
+    font-size: 21px;
+  }
+
+  .tracker-create-form,
+  .tracker-card {
+    padding: 17px;
+  }
+
+  .tracker-form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .tracker-list-heading h2 {
+    font-size: 17px;
+  }
+
+  .tracker-card h3 {
+    font-size: 18px;
+  }
+
+  .tracker-history-dot {
+    width: 25px;
+    height: 25px;
+  }
+}

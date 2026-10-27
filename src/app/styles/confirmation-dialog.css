@@ -1,0 +1,313 @@
+/* Shared LifeOS confirmation dialog */
+
+.lifeos-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(8, 15, 27, 0.62);
+  backdrop-filter: blur(6px);
+  animation: lifeos-confirm-fade 160ms ease-out;
+}
+
+.lifeos-confirm-dialog {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: start;
+  gap: 0 15px;
+  width: min(100%, 460px);
+  padding: 26px;
+  background: var(--surface);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
+  animation: lifeos-confirm-rise 180ms ease-out;
+}
+
+.lifeos-confirm-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 1px solid color-mix(
+    in srgb,
+    var(--danger) 28%,
+    var(--border)
+  );
+  border-radius: 16px;
+  background: color-mix(
+    in srgb,
+    var(--danger) 12%,
+    var(--surface)
+  );
+  color: var(--danger);
+}
+
+.lifeos-confirm-copy {
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.lifeos-confirm-copy h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: -0.4px;
+}
+
+.lifeos-confirm-copy p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.lifeos-confirm-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 27px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.lifeos-confirm-cancel,
+.lifeos-confirm-delete {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 17px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+.lifeos-confirm-cancel {
+  background: var(--surface);
+  color: var(--foreground);
+}
+
+.lifeos-confirm-cancel:hover {
+  background: var(--surface-muted);
+}
+
+.lifeos-confirm-delete {
+  background: color-mix(
+    in srgb,
+    var(--danger) 13%,
+    var(--surface)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--danger) 45%,
+    var(--border)
+  );
+  color: var(--danger);
+}
+
+.lifeos-confirm-delete:hover {
+  background: color-mix(
+    in srgb,
+    var(--danger) 21%,
+    var(--surface)
+  );
+}
+
+.lifeos-confirm-cancel:focus-visible,
+.lifeos-confirm-delete:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@keyframes lifeos-confirm-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lifeos-confirm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .lifeos-confirm-dialog {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 0 12px;
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .lifeos-confirm-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+
+  .lifeos-confirm-copy h2 {
+    font-size: 17px;
+  }
+
+  .lifeos-confirm-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lifeos-confirm-cancel,
+  .lifeos-confirm-delete {
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-confirm-overlay,
+  .lifeos-confirm-dialog {
+    animation: none;
+  }
+
+  .lifeos-confirm-cancel,
+  .lifeos-confirm-delete {
+    transition: none;
+  }
+}
+.task-edit-button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.task-edit-button:hover:not(:disabled) {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--foreground);
+}
+
+.task-edit-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.task-edit-form {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.4fr)
+    minmax(130px, 1fr)
+    minmax(100px, 0.7fr)
+    auto;
+  align-items: end;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.task-edit-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.task-edit-form .planner-input,
+.task-edit-form .planner-select {
+  min-width: 0;
+  min-height: 38px;
+  padding: 7px 9px;
+}
+
+.task-edit-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.task-edit-actions .planner-submit {
+  min-height: 38px;
+}
+
+@media (max-width: 640px) {
+  .task-edit-form {
+    grid-template-columns: minmax(0, 1fr) minmax(100px, 0.8fr);
+    gap: 8px;
+  }
+
+  .task-edit-title {
+    grid-column: 1 / -1;
+  }
+
+  .task-edit-date {
+    grid-column: 1;
+  }
+
+  .task-edit-priority {
+    grid-column: 2;
+  }
+
+  .task-edit-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+
+  .task-edit-button {
+    width: 30px;
+    height: 30px;
+  }
+}
+.task-scope-tabs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.task-scope-tabs .task-filter {
+  min-height: 32px;
+  cursor: pointer;
+}
+
+.task-edit-date {
+  min-width: 0;
+}
+
+.task-edit-date input {
+  width: 100%;
+}
